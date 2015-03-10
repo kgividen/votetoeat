@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html ng-app="myApp">
+<head>
+    <title>Where To Eat</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Where To Eat</title>
+    <!--&lt;!&ndash; HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries &ndash;&gt;-->
+    <!--&lt;!&ndash;[if lt IE 9]>-->
+    <!--<script src="../../assets/js/html5shiv.js"></script>-->
+    <!--<![endif]&ndash;&gt;-->
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
+    <link href="css/custom.css" rel="stylesheet">
+
+</head>
+<body ng-controller="wteController" role="document">
+
+<nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">Where To Eat</a>
+        </div>
+    </div>
+</nav>
+
+<div class="container theme-showcase" role="main">
+    <div class="jumbotron">
+        <h1>Where To Eat!</h1>
+        <p>Tired of arguing about where to eat?  This site is for you.</p>
+        <p id="createGroupBox" ng-show="showGroupBox">
+            <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#createGroupModal">Create Group &raquo;</button>
+            <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#joinGroupModal">Join Group &raquo;</button>
+        </p>
+    </div>
+
+    <div id="main_app" ng-show="showMainApp">
+        <div class="row marketing">
+            <div class="col-lg-6">
+                <h2>Places to Eat</h2>
+                <div class="well well-small">
+                    Place:
+                    <input class="input-large" type="text" ng-model="place_name">
+                    <button class="btn btn-primary" ng-click="addPlace()" href="#">Add</button>
+                </div>
+                <div class="controls controls-row" ng-repeat="place in places">
+                    <span class="span4" ng-bind="place.name"></span>
+                    <span ng-bind="place.num_votes"></span>
+                    <span>
+                        <div class="btn-toolbar">
+                            <div class="btn-group" ng-click="voted='true'" data-toggle="buttons-radio">
+                                <span ng-repeat="i in getNumber(vote_max)">
+                                    <button ng-click="voteForPlace(place,$index +1)" ng-disabled="voted" ng-bind="$index + 1" class="btn"></button>
+                                </span>
+                            </div>
+                        </div>
+                    </span>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <br>
+                <h2>Group {{group_name}}</h2>
+                <div class="controls controls-row" ng-repeat="user in users">
+                    <span class="span4" ng-bind="user.name"></span>
+                    <span class="span1 pull-right" ng-bind="user.points"></span>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <span class="pull-left">Hello {{user_name}} you have {{votes_left}} votes left!</span>
+        </div>
+        <div class="row">
+            <div id="messages" ng-repeat='message in messages'>
+                <div class="alert alert-warning alert-dismissible fade in" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <span ng-bind="message"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--Debug showing the scope -->
+    <!--<pre ng-bind="places | json"></pre>-->
+    <hr>
+
+    <footer>
+        <p>&copy; Where To Eat 2015</p>
+    </footer>
+
+</div> <!-- /container -->
+
+
+<!--MODALS-->
+<div id="createGroupModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="createGroupModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="createGroupLabel">Create Group</h4>
+            </div>
+            <div class="modal-body">
+                Group Name:
+                <input class="input-large" type="text" id="input_group_name" ng-model="group_name">
+                <button class="btn btn-primary" data-dismiss="modal" ng-click="createGroup()">Create Group</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="joinGroupModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="joinGroupModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="joinGroupLabel">Join Group</h4>
+            </div>
+            <div class="modal-body">
+                Group Name:
+                <input class="input-large" type="text" id="join_group_name" ng-model="group_name">
+                <button class="btn btn-primary" data-dismiss="modal" ng-click="joinGroup()">Join Group</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="enterNameModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="enterNameModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="enterNameModalLabel">Enter Name</h4>
+            </div>
+            <div class="modal-body">
+                Enter Your Name:
+                <input class="input-large" type="text" id="input_user_name" ng-model="user_name">
+                <button class="btn btn-primary" data-dismiss="modal" ng-click="addUser()">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<!-- JavaScript Files================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<!--<script src="http://codeorigin.jquery.com/jquery-1.10.2.min.js"></script>-->
+<script src="js/lib/jquery-1.10.2.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+<!--<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular.min.js"></script>-->
+<script src="js/lib/angular.min.js"></script>
+<script type='text/javascript' src='/socket.io/socket.io.js'></script>
+<script type="text/javascript" src='js/wte_util.js'></script>
+<script type="text/javascript" src='js/services.js'></script>
+<!--<script type="text/javascript" src='/javascripts/filters.js'></script>-->
+<script type="text/javascript" src='js/controllers.js'></script>
+<!--<script type="text/javascript" src='/javascripts/directives.js'></script>-->
+</body>
+</html>
