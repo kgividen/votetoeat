@@ -38,10 +38,10 @@ function wteController($scope, $filter, $http, socket) {
         console.log($scope.places);
 
         var nPlace = {
-            "id" : wte_util.createGuid(),
+            //"id" : wte_util.createGuid(),
             "name" : $scope.place_name,
             "type" : "place",
-            "group" : $scope.group_guid,
+            //"group" : $scope.group_guid,
             "num_votes" : "0"
         };
         console.log("In add place" + nPlace);
@@ -71,13 +71,9 @@ function wteController($scope, $filter, $http, socket) {
         socket.emit('join_group', {
             group: $scope.group_name,
             user: nUser
+        },function(data){
+            $scope.users = data.members;
         });
-
-
-
-        //Send this to everyone else
-        //nUser.group = $scope.group_name;
-        //socket.emit('send:newUser', nUser);
 
         //Tell the user it happened.
         $scope.showGroupBox = false;
@@ -124,11 +120,11 @@ function wteController($scope, $filter, $http, socket) {
     });
 
     //When a new person comes from somewhere we need to add it to our list.
-    socket.on('send:newUser', function (data) {
+    socket.on('send:updateGroup', function (data) {
         //Add them to the list of people
         //$scope.users = $scope.users.concat(nUser);
-        $scope.newUser = data.user.name;
-        $scope.users = data.users;
+        //$scope.newUser = data.user.name;
+        $scope.users = data.members;
 
         // Notify everyone that a new person is here via a message to our messages model
         $scope.messages.push(data.user.name + " is now here!");
@@ -160,8 +156,9 @@ function wteController($scope, $filter, $http, socket) {
 
     socket.on('user:left', function(user) {
         $scope.messages.push(user.name + " has left.");
+        //remove the user from the array
         for (i = 0; i < $scope.users.length; i++) {
-            if ($scope.users[i] === user.name) {
+            if ($scope.users[i].name === user.name) {
                 $scope.users.splice(i, 1);
                 break;
             }

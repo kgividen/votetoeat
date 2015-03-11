@@ -1,13 +1,58 @@
-var users = [];
+var _ = require('underscore');
+
+//[
+//    {
+//        "name": "group1",
+//        "members":["member1","member2"],
+//        "places":[{
+//            "name":"Cafe Rio",
+//            "votes":10
+//        }]
+//    },
+//    {
+//        "name": "group2",
+//        "members":["member3","member4"],
+//        "places":[{
+//            "name":"Culvers",
+//            "votes":10
+//        }]
+//    }
+//]
+var groups = [];
 
 // export function for listening to the socket
 module.exports = function (socket) {
-    socket.on('join_group', function(data) {
+    socket.on('join_group', function(data, callback) {
         socket.join(data.group);
         socket.user_group = data.group;
-        socket.in(data.group).emit('send:newUser', data);
         socket.user_name = data.user.name;
-        users.push(data.user.name);
+
+        //Todo we probably want to move all this logic out to a database with some rest calls instead of handling it with socket.io and keeping it in memory
+
+        //Find out if group exists add this user as a member then emit the new array.
+        var groupInArray = _.findWhere(groups,{"name": data.group});
+        if(groupInArray){
+            groupInArray.members.push(data.user);
+            socket.in(data.group).emit('send:updateGroup', groupInArray);
+            if (callback) {
+                callback(groupInArray);
+            }
+        // If not then add it to groups array and then add user as a member.
+        // We don't need to emit in this case cause it's a new group created by that user
+        } else {
+            //new group
+            var group = {
+                "name": data.group
+            };
+            group.members = [];
+            group.members.push(data.user);
+            groups.push(group);
+            if (callback) {
+                callback(group);
+            }
+        }
+
+
     });
 
     // broadcast a user's message to other users
@@ -19,11 +64,14 @@ module.exports = function (socket) {
     });
 
     // broadcast a user has been added to other users
-    //socket.on('send:newUser', function (data) {
-    //    socket.in(data.group).emit('send:newUser', data);
-    //    socket.user_name = data.name;
-    //    users.push(data.name);
-    //});
+    socket.on('send:updateGroup', function (data) {
+        socket.in(data.group).emit('send:updateGroup', data);
+        socket.user_name = data.name;
+    });
+
+    socket.on('user:left', function (data) {
+        socket.in(data.group).emit('user:left', data);
+    });
 
     // broadcast a place has been added to other users
     socket.on('send:newPlace', function (data) {
@@ -37,8 +85,27 @@ module.exports = function (socket) {
 
     // clean up when a user leaves, and broadcast it to other users
     socket.on('disconnect', function (data) {
+        if(_.isUndefined(socket.user_name)){
+            return;
+        }
+
+        //let everyone else know the user left.
         socket.in(socket.user_group).emit('user:left', {
             name: socket.user_name
         });
+
+        //remove the exiting person from the group list.
+        var groupArray = _.find(groups, function(group){
+            return group.name == socket.user_group;
+        });
+        var idx = _.findIndex(groupArray.members, {name: socket.user_name})
+        groupArray.members.splice(idx, 1); //remove member from array
+
+        //If Group members is 0 remove the group from memory
+        if(groupArray.members.length == 0){
+            var gIdx = _.findIndex(groups, {name: socket.user_group});
+            groups.splice(gIdx,1); //remove group from array
+        }
+
     });
 };
