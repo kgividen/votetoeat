@@ -3,7 +3,7 @@ function wteController($scope, $filter, $http, socket) {
     $scope.places = [];
     $scope.messages = ["Welcome!  Let's find out Where To Eat!"];
     $scope.vote_max = 10;
-    $scope.votes_left = 10;
+    $scope.votesLeft = 10;
     $scope.voted = false;
     $scope.showGroupBox = true;
     $scope.showMainApp = false;
@@ -23,9 +23,9 @@ function wteController($scope, $filter, $http, socket) {
 
     $scope.addUser = function() {
         var nUser = {
-            "id" : wte_util.createGuid(),
+            //"id" : wte_util.createGuid(),
             "name" : $scope.userName,
-            "points" : "10"
+            "votes" : "10"
         };
 
         socket.emit('join_group', {
@@ -44,7 +44,7 @@ function wteController($scope, $filter, $http, socket) {
     $scope.addPlace = function() {
         var place = {
             "name" : $scope.placeName,
-            "num_votes" : "0"
+            "num_votes" : 0
         };
 
         //Update local UI
@@ -60,20 +60,25 @@ function wteController($scope, $filter, $http, socket) {
     };
 
     $scope.voteForPlace = function(place,n) {
-
-
-        if($scope.votes_left > 0 && $scope.votes_left - n >= 0){
+        if($scope.votesLeft > 0 && $scope.votesLeft - n >= 0){
             //todo: disable that buttonbar so they can't revote on that item.
-
-            $scope.votes_left = $scope.votes_left - n;
+            $scope.votesLeft = $scope.votesLeft - n;
             if(!place.num_votes){
                 place.num_votes = 0;
             }
-            place.num_votes = place.num_votes + n;
+            place.num_votes = parseInt(place.num_votes) + n;
+
+            //Subtract votes from this user
+            var user = _.find($scope.users, function(user){
+                return user.name == $scope.userName;
+            });
+
+            user.votes = $scope.votesLeft;
 
             //Send this to everyone else
             place.newVote = n;
             place.newVoter = $scope.userName;
+            place.group = $scope.groupName;
 
             socket.emit('send:vote', place);
 
@@ -99,16 +104,6 @@ function wteController($scope, $filter, $http, socket) {
     });
 
     //When a new person comes from somewhere we need to add it to our list.
-    //socket.on('send:updateGroup', function (data) {
-    //    //Add them to the list of people
-    //    //$scope.users = $scope.users.concat(nUser);
-    //    //$scope.newUser = data.user.name;
-    //    $scope.users = data.members;
-    //
-    //    // Notify everyone that a new person is here via a message to our messages model
-    //    $scope.messages.push(data.user.name + " is now here!");
-    //});
-
     socket.on('send:newUser', function (data) {
         //Add them to the list of people
         $scope.users.push(data.user);
@@ -128,17 +123,19 @@ function wteController($scope, $filter, $http, socket) {
 
     //When someone votes we need to update the total.
     socket.on('send:vote', function (place) {
-        var n = place.newVote;
-
         //get the correct place from the scope based on the ID.
-        var currentPlace = $filter('getByProperty')('id', place.id, $scope.places);
+        var currentPlace = _.find($scope.places, function(p){
+            return p.name == place.name;
+        });
         if(!currentPlace.num_votes){
             currentPlace.num_votes = 0;
         }
-        currentPlace.num_votes = currentPlace.num_votes + n;
+        currentPlace.num_votes = currentPlace.num_votes + place.newVote;
+
+        //TODO Take vote away from correct user
 
         // Notify everyone that a new vote happened a message to our messages model
-        $scope.messages.push(currentPlace.name + " had " + n + " votes added by " + place.newVoter + "!");
+        $scope.messages.push(currentPlace.name + " had " + place.newVote + " votes added by " + place.newVoter + "!");
     });
 
     socket.on('user:left', function(user) {
