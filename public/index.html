@@ -47,7 +47,7 @@
                 <h2>Places to Eat</h2>
                 <div class="well well-small">
                     Place:
-                    <input class="input-large" type="text" ng-model="place_name">
+                    <input class="input-large" type="text" ng-model="placeName">
                     <button class="btn btn-primary" ng-click="addPlace()" href="#">Add</button>
                 </div>
                 <div class="controls controls-row" ng-repeat="place in places">
@@ -66,7 +66,7 @@
             </div>
             <div class="col-lg-6">
                 <br>
-                <h2>Members of {{group_name}}</h2>
+                <h2>Members of {{groupName}}</h2>
                 <div class="controls controls-row" ng-repeat="user in users">
                     <span class="span4" ng-bind="user.name"></span>
                     <span class="span1 pull-right" ng-bind="user.points"></span>
@@ -74,7 +74,7 @@
             </div>
         </div>
         <div class="row">
-            <span class="pull-left">Hello {{user_name}} you have {{votes_left}} votes left!</span>
+            <span class="pull-left">Hello {{userName}} you have {{votes_left}} votes left!</span>
         </div>
         <div class="row">
             <div id="messages" ng-repeat='message in messages'>
@@ -87,7 +87,7 @@
     </div>
 
     <!--Debug showing the scope -->
-    <!--<pre ng-bind="places | json"></pre>-->
+    <pre ng-bind="places | json"></pre>
     <hr>
 
     <footer>
@@ -107,7 +107,7 @@
             </div>
             <div class="modal-body">
                 Group Name:
-                <input class="input-large" type="text" id="input_group_name" ng-model="group_name">
+                <input class="input-large" type="text" id="input_group_name" ng-model="groupName">
                 <button class="btn btn-primary" data-dismiss="modal" ng-click="createGroup()">Create Group</button>
             </div>
         </div>
@@ -122,7 +122,7 @@
             </div>
             <div class="modal-body">
                 Group Name:
-                <input class="input-large" type="text" id="join_group_name" ng-model="group_name">
+                <input class="input-large" type="text" id="join_group_name" ng-model="groupName">
                 <button class="btn btn-primary" data-dismiss="modal" ng-click="joinGroup()">Join Group</button>
             </div>
         </div>
@@ -137,7 +137,7 @@
             </div>
             <div class="modal-body">
                 Enter Your Name:
-                <input class="input-large" type="text" id="input_user_name" ng-model="user_name">
+                <input class="input-large" type="text" id="input_userName" ng-model="userName">
                 <button class="btn btn-primary" data-dismiss="modal" ng-click="addUser()">Save</button>
             </div>
         </div>

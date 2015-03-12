@@ -1,6 +1,5 @@
 function wteController($scope, $filter, $http, socket) {
     $scope.users = [];
-    $scope.newUser = "";
     $scope.places = [];
     $scope.messages = ["Welcome!  Let's find out Where To Eat!"];
     $scope.vote_max = 10;
@@ -8,76 +7,56 @@ function wteController($scope, $filter, $http, socket) {
     $scope.voted = false;
     $scope.showGroupBox = true;
     $scope.showMainApp = false;
+    $scope.groupName = "";
 
     $scope.createGroup = function () {
         //todo: make sure name is unique?
         var group_guid = wte_util.createGuid();
         $scope.group_guid = group_guid;
-        //var group = {
-        //    "id" : group_guid,
-        //    "password": "blah",
-        //    "name" : $scope.group_name,
-        //    "type" : "group"
-        //};
-        //socket.emit('join_group', {
-        //    group: $scope.group_name
-        //});
-
         $("#enterNameModal").modal('show');
     };
 
     $scope.joinGroup = function () {
-    //    socket.emit('join_group', {
-    //        group: $scope.group_name
-    //    });
-    //
+        //We emit after entering the name so that's in $scope.addUser
         $("#enterNameModal").modal('show');
-    };
-
-    $scope.addPlace = function() {
-        console.log($scope.places);
-
-        var nPlace = {
-            //"id" : wte_util.createGuid(),
-            "name" : $scope.place_name,
-            "type" : "place",
-            //"group" : $scope.group_guid,
-            "num_votes" : "0"
-        };
-        console.log("In add place" + nPlace);
-
-        //Update local UI
-        $scope.places = $scope.places.concat(nPlace);
-
-        nPlace.group = $scope.group_name;
-        //send it to the other clients
-        socket.emit('send:newPlace', nPlace);
-
-        $scope.messages.push(nPlace.name + " was added as a place to eat by " + $scope.user_name +"!");
     };
 
     $scope.addUser = function() {
         var nUser = {
             "id" : wte_util.createGuid(),
-            "name" : $scope.user_name,
-            "points" : "10",
-            "group" : $scope.group_guid,
-            "type" : "user"
+            "name" : $scope.userName,
+            "points" : "10"
         };
 
-        //Disable the Add button so you can only add one user
-//        $("#input_name").prop('disabled',true);
-
         socket.emit('join_group', {
-            group: $scope.group_name,
+            group: $scope.groupName,
             user: nUser
         },function(data){
             $scope.users = data.members;
+            $scope.places = data.places;
         });
 
         //Tell the user it happened.
         $scope.showGroupBox = false;
         $scope.showMainApp = true;
+    };
+
+    $scope.addPlace = function() {
+        var place = {
+            "name" : $scope.placeName,
+            "num_votes" : "0"
+        };
+
+        //Update local UI
+        $scope.places.push(place);
+
+        //send place to the other clients
+        var obj = {};
+        obj.group = $scope.groupName;
+        obj.place = place;
+        socket.emit('send:newPlace', obj);
+
+        $scope.messages.push(place.name + " was added as a place to eat by " + $scope.userName +"!");
     };
 
     $scope.voteForPlace = function(place,n) {
@@ -94,7 +73,7 @@ function wteController($scope, $filter, $http, socket) {
 
             //Send this to everyone else
             place.newVote = n;
-            place.newVoter = $scope.user_name;
+            place.newVoter = $scope.userName;
 
             socket.emit('send:vote', place);
 
@@ -120,23 +99,31 @@ function wteController($scope, $filter, $http, socket) {
     });
 
     //When a new person comes from somewhere we need to add it to our list.
-    socket.on('send:updateGroup', function (data) {
+    //socket.on('send:updateGroup', function (data) {
+    //    //Add them to the list of people
+    //    //$scope.users = $scope.users.concat(nUser);
+    //    //$scope.newUser = data.user.name;
+    //    $scope.users = data.members;
+    //
+    //    // Notify everyone that a new person is here via a message to our messages model
+    //    $scope.messages.push(data.user.name + " is now here!");
+    //});
+
+    socket.on('send:newUser', function (data) {
         //Add them to the list of people
-        //$scope.users = $scope.users.concat(nUser);
-        //$scope.newUser = data.user.name;
-        $scope.users = data.members;
+        $scope.users.push(data.user);
 
         // Notify everyone that a new person is here via a message to our messages model
         $scope.messages.push(data.user.name + " is now here!");
     });
 
     //When a new place comes from somewhere we need to add it to our list.
-    socket.on('send:newPlace', function (nPlace) {
+    socket.on('send:newPlace', function (data) {
         //update the UI
-        $scope.places = $scope.places.concat(nPlace);
+        $scope.places.push(data.place);
 
         // Notify everyone that a new person is here via a message to our messages model
-        $scope.messages.push(nPlace.name + " was added as a place to eat!");
+        $scope.messages.push(data.place.name + " was added as a place to eat!");
     });
 
     //When someone votes we need to update the total.

@@ -1,3 +1,6 @@
+//TODO Now we need to implement the voting and hold it in memory like the users.
+//TODO whereiwanttoeat.com, votetoeat.com is available
+
 var _ = require('underscore');
 
 //[
@@ -27,13 +30,14 @@ module.exports = function (socket) {
         socket.user_group = data.group;
         socket.user_name = data.user.name;
 
-        //Todo we probably want to move all this logic out to a database with some rest calls instead of handling it with socket.io and keeping it in memory
+        //Todo we probably want to move all this group array logic out to a database with some rest calls instead of handling it with socket.io and keeping it in memory
 
         //Find out if group exists add this user as a member then emit the new array.
         var groupInArray = _.findWhere(groups,{"name": data.group});
         if(groupInArray){
             groupInArray.members.push(data.user);
-            socket.in(data.group).emit('send:updateGroup', groupInArray);
+            //socket.in(data.group).emit('send:updateGroup', groupInArray);
+            socket.in(data.group).emit('send:newUser', data);
             if (callback) {
                 callback(groupInArray);
             }
@@ -45,6 +49,7 @@ module.exports = function (socket) {
                 "name": data.group
             };
             group.members = [];
+            group.places = [];
             group.members.push(data.user);
             groups.push(group);
             if (callback) {
@@ -69,13 +74,24 @@ module.exports = function (socket) {
         socket.user_name = data.name;
     });
 
+    socket.on('send:newUser', function (data) {
+        socket.in(data.group).emit('send:newUser', data);
+        socket.user_name = data.user.name;
+    });
+
     socket.on('user:left', function (data) {
         socket.in(data.group).emit('user:left', data);
     });
 
     // broadcast a place has been added to other users
     socket.on('send:newPlace', function (data) {
-        socket.in(data.group).emit('send:newPlace', data);
+        //add new place to group
+        var group = _.findWhere(groups,{"name": data.group});
+        if(group){
+            group.places.push(data.place);
+            //socket.in(data.group).emit('send:updateGroup', groupInArray);
+            socket.in(data.group).emit('send:newPlace', data);
+        }
     });
 
     // broadcast a place has been added to other users
