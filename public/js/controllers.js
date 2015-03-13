@@ -25,7 +25,7 @@ function wteController($scope, $filter, $http, socket) {
         var nUser = {
             //"id" : wte_util.createGuid(),
             "name" : $scope.userName,
-            "votes" : "10"
+            "votesLeft" : "10"
         };
 
         socket.emit('join_group', {
@@ -44,7 +44,7 @@ function wteController($scope, $filter, $http, socket) {
     $scope.addPlace = function() {
         var place = {
             "name" : $scope.placeName,
-            "num_votes" : 0
+            "votes" : 0
         };
 
         //Update local UI
@@ -63,17 +63,17 @@ function wteController($scope, $filter, $http, socket) {
         if($scope.votesLeft > 0 && $scope.votesLeft - n >= 0){
             //todo: disable that buttonbar so they can't revote on that item.
             $scope.votesLeft = $scope.votesLeft - n;
-            if(!place.num_votes){
-                place.num_votes = 0;
+            if(!place.votes){
+                place.votes = 0;
             }
-            place.num_votes = parseInt(place.num_votes) + n;
+            place.votes = parseInt(place.votes) + n;
 
             //Subtract votes from this user
             var user = _.find($scope.users, function(user){
                 return user.name == $scope.userName;
             });
 
-            user.votes = $scope.votesLeft;
+            user.votesLeft = $scope.votesLeft;
 
             //Send this to everyone else
             place.newVote = n;
@@ -127,13 +127,17 @@ function wteController($scope, $filter, $http, socket) {
         var currentPlace = _.find($scope.places, function(p){
             return p.name == place.name;
         });
-        if(!currentPlace.num_votes){
-            currentPlace.num_votes = 0;
+        if(!currentPlace.votes){
+            currentPlace.votes = 0;
         }
-        currentPlace.num_votes = currentPlace.num_votes + place.newVote;
+        currentPlace.votes = currentPlace.votes + place.newVote;
 
         //TODO Take vote away from correct user
+        var voter = _.find($scope.users, function(user){
+            return user.name == place.newVoter;
+        });
 
+        voter.votesLeft = voter.votesLeft - place.newVote;
         // Notify everyone that a new vote happened a message to our messages model
         $scope.messages.push(currentPlace.name + " had " + place.newVote + " votes added by " + place.newVoter + "!");
     });

@@ -1,4 +1,4 @@
-//TODO Now we need to implement the voting and hold it in memory like the users.
+//TODO We need to hold votes in memory like the users so that when a third one comes in they get them on join_group.
 //TODO whereiwanttoeat.com, votetoeat.com is available
 
 var _ = require('underscore');
@@ -6,7 +6,13 @@ var _ = require('underscore');
 //[
 //    {
 //        "name": "group1",
-//        "members":["member1","member2"],
+//        "members":[{
+//                      "name":"c1",
+//                      "votesLeft": 10,
+//                  },{
+//                      "name":"f1",
+//                      "votesLeft":10
+//        }],
 //        "places":[{
 //            "name":"Cafe Rio",
 //            "votes":10
@@ -14,7 +20,13 @@ var _ = require('underscore');
 //    },
 //    {
 //        "name": "group2",
-//        "members":["member3","member4"],
+//        "members":[{
+//                      "name":"c1",
+//                      "votesLeft": 10,
+//                  },{
+//                      "name":"f1",
+//                      "votesLeft":10
+//        }],
 //        "places":[{
 //            "name":"Culvers",
 //            "votes":10
@@ -97,6 +109,22 @@ module.exports = function (socket) {
     // broadcast a place has been added to other users
     socket.on('send:vote', function (data) {
         socket.in(data.group).emit('send:vote', data);
+        var groupArray = _.find(groups, function(group){
+            return group.name == data.group;
+        });
+
+        //update the place with the votes
+        var place = _.find(groupArray.places, function(place){
+            return place.name == data.name;
+        });
+        place.votes = place.votes + data.newVote;
+
+        //substract the votes from the user so it's tracked in the variables
+        var voter = _.find(groupArray.members, function(member){
+            return member.name == data.newVoter;
+        });
+
+        voter.votesLeft = voter.votesLeft - data.newVote;
     });
 
     // clean up when a user leaves, and broadcast it to other users
