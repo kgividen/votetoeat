@@ -1,4 +1,3 @@
-//TODO We need to hold votes in memory like the users so that when a third one comes in they get them on join_group.
 //TODO whereiwanttoeat.com, votetoeat.com is available
 
 var _ = require('underscore');

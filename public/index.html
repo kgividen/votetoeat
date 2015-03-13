@@ -65,21 +65,17 @@
         <div class="col-md-12">
             <div class="container">
                 <h2 class="col-md-2">Places</h2>
-                <h2 class="col-md-6">My Votes</h2>
-                <h2 class="col-md-2">Total Votes</h2>
-
+                <h2 class="col-md-6">Votes</h2>
             </div>
             <div class="col-md-12 well">
                 <div class="row" ng-repeat="place in places">
                     <div class="col-md-2">
                         <span ng-bind="place.name"></span>
                     </div>
-                    <div class="col-md-6">
-                        <div id="tab" class="btn-group" data-toggle="buttons">
-                            <div class="btn btn-default" ng-disabled="votesLeft<=0" data-toggle="tab" ng-click="voteForPlace(place,$index)" ng-class="{active:$index==0}"  ng-repeat="i in getNumber(vote_max)" >
-                                <input type="radio" >{{$index}}
-                            </div>
-                        </div>
+                    <div class="col-md-8">
+                        <button class="btn btn-default" ng-disabled="votesLeft<=0" data-toggle="tab" ng-click="voteForPlace(place,$index)" ng-repeat="i in getNumber(vote_max + 1)" >
+                            {{$index}}
+                        </button>
                         &nbsp
                         <span ng-bind="place.votes"></span><span>&nbsp total</span>
                     </div>
@@ -90,24 +86,23 @@
     <div class="row">
         <div class="col-md-12">
             <div class="container">
-                <h2 class="col-md-4">Members of {{groupName}}</h2>
-                <h2 class="col-md-2">Votes Left</h2>
+                <h2 class="col-md-12">Members of {{groupName}}</h2>
             </div>
             <div class="col-md-12 well">
                 <div class="row" ng-repeat="user in users">
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <span ng-bind="user.name"></span>
-                    </div>
-                    <div class="col-md-2">
+                        <span> has</span>
                         <span ng-bind="user.votesLeft"></span>
+                        <span> votes left.</span>
                     </div>
                 </div>
             </div>
         </div>
     </div>
     <div class="row">
-        <div class="col-md-12" id="messages" ng-repeat='message in messages'>
-            <div class="alert alert-warning alert-dismissible fade in" role="alert">
+        <div class="col-sm-12" >
+            <div class="alert alert-warning alert-dismissible fade in" role="alert" id="messages" ng-repeat='message in messages'>
                 <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 <span ng-bind="message"></span>
             </div>
@@ -116,7 +111,7 @@
 </div>
 
     <!--Debug showing the scope -->
-    <pre ng-bind="voted | json"></pre>
+    <!--<pre ng-bind="voted | json"></pre>-->
     <hr>
 
     <footer>
