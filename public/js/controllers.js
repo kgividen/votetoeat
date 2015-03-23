@@ -1,7 +1,6 @@
-function wteController($scope, $filter, $http, socket) {
+function wteController($scope, $filter, $http, socket, growl) {
     $scope.users = [];
     $scope.places = [];
-    $scope.messages = ["Welcome!  Let's find out Where To Eat!"];
     $scope.vote_max = 10;
     $scope.votesLeft = 10;
     $scope.voted = false;
@@ -39,6 +38,8 @@ function wteController($scope, $filter, $http, socket) {
         //Tell the user it happened.
         $scope.showGroupBox = false;
         $scope.showMainApp = true;
+
+        growl.success("Welcome!  Let's find out Where To Eat!");
     };
 
     $scope.addPlace = function() {
@@ -56,7 +57,8 @@ function wteController($scope, $filter, $http, socket) {
         obj.place = place;
         socket.emit('send:newPlace', obj);
 
-        $scope.messages.push(place.name + " was added as a place to eat by " + $scope.userName +"!");
+        //growl.info(place.name + " was added as a place to eat by " + $scope.userName +"!", {ttl: 2000, disableCountDown: true});
+        growl.info(place.name + " was added as a place to eat by " + $scope.userName +"!");
     };
 
     $scope.voteForPlace = function(place,n) {
@@ -83,9 +85,9 @@ function wteController($scope, $filter, $http, socket) {
             socket.emit('send:vote', place);
 
             //Tell the user it happened
-            $scope.messages.push(place.name + " had " + n + " votes added by " + place.newVoter + "!");
+            growl.info(place.name + " had " + n + " votes added by " + place.newVoter + "!");
         }else{
-            $scope.messages.push("Sorry not enough votes left!");
+            growl.error("Sorry not enough votes left!");
         }
     };
 
@@ -100,7 +102,7 @@ function wteController($scope, $filter, $http, socket) {
     });
 
     socket.on('send:message', function (message) {
-        $scope.messages.push(message);
+        growl.info(message);
     });
 
     //When a new person comes from somewhere we need to add it to our list.
@@ -109,7 +111,7 @@ function wteController($scope, $filter, $http, socket) {
         $scope.users.push(data.user);
 
         // Notify everyone that a new person is here via a message to our messages model
-        $scope.messages.push(data.user.name + " is now here!");
+        growl.info(data.user.name + " is now here!");
     });
 
     //When a new place comes from somewhere we need to add it to our list.
@@ -118,7 +120,7 @@ function wteController($scope, $filter, $http, socket) {
         $scope.places.push(data.place);
 
         // Notify everyone that a new person is here via a message to our messages model
-        $scope.messages.push(data.place.name + " was added as a place to eat!");
+        growl.info(data.place.name + " was added as a place to eat!");
     });
 
     //When someone votes we need to update the total.
@@ -139,11 +141,11 @@ function wteController($scope, $filter, $http, socket) {
 
         voter.votesLeft = voter.votesLeft - place.newVote;
         // Notify everyone that a new vote happened a message to our messages model
-        $scope.messages.push(currentPlace.name + " had " + place.newVote + " votes added by " + place.newVoter + "!");
+        growl.info(currentPlace.name + " had " + place.newVote + " votes added by " + place.newVoter + "!");
     });
 
     socket.on('user:left', function(user) {
-        $scope.messages.push(user.name + " has left.");
+        growl.warn(user.name + " has left.");
         //remove the user from the array
         for (i = 0; i < $scope.users.length; i++) {
             if ($scope.users[i].name === user.name) {

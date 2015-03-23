@@ -1,5 +1,9 @@
 //var myModule = angular.module('myApp', ['myApp.filters', 'myApp.directives']);
-var myModule = angular.module('myApp', []);
+var myModule = angular.module('myApp', ['angular-growl']);
+
+myModule.config(['growlProvider', function(growlProvider) {
+    growlProvider.globalPosition('bottom-left');
+}]);
 
 myModule.factory('socket', function ($rootScope) {
     var socket = io.connect();

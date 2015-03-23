@@ -14,7 +14,7 @@ var app = express();
 //If we want to use jade this is how we'd do it.
 // view engine setup
 //app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
+//app.set('view engine', 'jade');
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(__dirname + '/public/favicon.ico'));
