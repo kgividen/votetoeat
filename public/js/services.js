@@ -3,6 +3,7 @@ var myModule = angular.module('myApp', ['angular-growl']);
 
 myModule.config(['growlProvider', function(growlProvider) {
     growlProvider.globalPosition('bottom-left');
+    growlProvider.globalReversedOrder(true);
 }]);
 
 myModule.factory('socket', function ($rootScope) {
