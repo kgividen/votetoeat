@@ -60,20 +60,15 @@
     </div>
     <div class="row">
         <div class="col-md-12">
-            <div class="col-md-12 well">
-                <strong>Add Place</strong>
-                <input class="input-large" type="text" ng-model="placeName">
-                <button class="btn btn-primary" ng-click="addPlace()" href="#">Add</button>
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-12">
-            <div class="container">
-                <h2 class="col-md-2">Places</h2>
-                <h2 class="col-md-6">Votes</h2>
-            </div>
-            <div class="col-md-12 well">
+            <h2>Places</h2>
+            <form class="form-inline">
+                <div class="form-group">
+                    <label for="input_add_place_name">Add New Place</label>
+                    <input type="text" class="form-control" id="input_add_place_name" placeholder="Place Name" ng-model="placeName">
+                </div>
+                <button type="submit" class="btn btn-primary" data-dismiss="modal" ng-click="addPlace()">Add</button>
+            </form>
+            <div class="col-md-12" ng-class="{true: 'well'}[places.length > 0]">
                 <div class="row" ng-repeat="place in places">
                     <div class="col-md-2">
                         <span ng-bind="place.name"></span>
@@ -91,9 +86,7 @@
     </div>
     <div class="row">
         <div class="col-md-12">
-            <div class="container">
-                <h2 class="col-md-12">Members of {{groupName}}</h2>
-            </div>
+            <h2>Members of {{groupName}}</h2>
             <div class="col-md-12 well">
                 <div class="row" ng-repeat="user in users">
                     <div class="col-md-3">

@@ -1,7 +1,7 @@
 function vteController($scope, $filter, $http, socket, growl) {
     $scope.users = [];
     $scope.places = [];
-    $scope.vote_max = 10;
+    $scope.vote_max = 8;
     $scope.votesLeft = 10;
     $scope.voted = false;
     $scope.showGroupBox = true;
@@ -55,6 +55,8 @@ function vteController($scope, $filter, $http, socket, growl) {
     };
 
     $scope.addPlace = function() {
+        if (!$scope.placeName) return;  //make sure they've entered a place name.
+
         //check for duplicates
         if(_.findWhere($scope.places,{"name": $scope.placeName})){
             growl.error("Cannot add a duplicate place!");
@@ -162,7 +164,8 @@ function vteController($scope, $filter, $http, socket, growl) {
     });
 
     socket.on('user:left', function(user) {
-        growl.warn(user.name + " has left.");
+        if (!user.name) return;
+        growl.warning(user.name + " has left.");
         //remove the user from the array
         for (i = 0; i < $scope.users.length; i++) {
             if ($scope.users[i].name === user.name) {
