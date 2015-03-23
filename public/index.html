@@ -27,7 +27,8 @@
 <body ng-controller="vteController" role="document">
 
 <nav class="navbar navbar-inverse navbar-fixed-top">
-    <div class="container">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
         <div class="navbar-header">
             <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
                 <span class="icon-bar"></span>
@@ -138,9 +139,13 @@
                 <h4 class="modal-title" id="createGroupLabel">Create Group</h4>
             </div>
             <div class="modal-body">
-                Group Name:
-                <input class="input-large" type="text" id="input_group_name" ng-model="groupName">
-                <button class="btn btn-primary" data-dismiss="modal" ng-click="createGroup()">Create Group</button>
+                <form class="form-inline">
+                    <div class="form-group">
+                        <label for="input_group_name">Group Name</label>
+                        <input type="text" class="form-control" id="input_group_name" placeholder="Group Name" ng-model="groupName">
+                    </div>
+                    <button type="submit" class="btn btn-primary" data-dismiss="modal" ng-click="createGroup()">Create Group</button>
+                </form>
             </div>
         </div>
     </div>
@@ -153,9 +158,13 @@
                 <h4 class="modal-title" id="joinGroupLabel">Join Group</h4>
             </div>
             <div class="modal-body">
-                Group Name:
-                <input class="input-large" type="text" id="join_group_name" ng-model="groupName">
-                <button class="btn btn-primary" data-dismiss="modal" ng-click="joinGroup()">Join Group</button>
+                <form class="form-inline">
+                    <div class="form-group">
+                        <label for="join_group_name">Group Name</label>
+                        <input type="text" class="form-control" id="join_group_name" placeholder="Group Name" ng-model="groupName">
+                    </div>
+                    <button type="submit" class="btn btn-primary" data-dismiss="modal" ng-click="joinGroup()">Join Group</button>
+                </form>
             </div>
         </div>
     </div>
@@ -168,9 +177,13 @@
                 <h4 class="modal-title" id="enterNameModalLabel">Enter Name</h4>
             </div>
             <div class="modal-body">
-                Enter Your Name:
-                <input class="input-large" type="text" id="input_userName" ng-model="userName">
-                <button class="btn btn-primary" data-dismiss="modal" ng-click="addUser()">Save</button>
+                <form class="form-inline">
+                    <div class="form-group">
+                        <label for="join_group_name">Your Name</label>
+                        <input type="text" class="form-control" id="input_userName" placeholder="User Name" ng-model="userName">
+                    </div>
+                    <button type="submit" class="btn btn-primary" data-dismiss="modal" ng-click="addUser()">Save</button>
+                </form>
             </div>
         </div>
     </div>
