@@ -1,4 +1,4 @@
-function wteController($scope, $filter, $http, socket, growl) {
+function vteController($scope, $filter, $http, socket, growl) {
     $scope.users = [];
     $scope.places = [];
     $scope.vote_max = 10;
@@ -10,7 +10,7 @@ function wteController($scope, $filter, $http, socket, growl) {
 
     $scope.createGroup = function () {
         //todo: make sure name is unique?
-        var group_guid = wte_util.createGuid();
+        var group_guid = vte_util.createGuid();
         $scope.group_guid = group_guid;
         $("#enterNameModal").modal('show');
     };
@@ -22,7 +22,7 @@ function wteController($scope, $filter, $http, socket, growl) {
 
     $scope.addUser = function() {
         var nUser = {
-            //"id" : wte_util.createGuid(),
+            //"id" : vte_util.createGuid(),
             "name" : $scope.userName,
             "votesLeft" : "10"
         };
@@ -39,7 +39,7 @@ function wteController($scope, $filter, $http, socket, growl) {
         $scope.showGroupBox = false;
         $scope.showMainApp = true;
 
-        growl.success("Welcome!  Let's find out Where To Eat!");
+        growl.success("Welcome!  Let's find out Vote To Eat!");
     };
 
     $scope.addPlace = function() {

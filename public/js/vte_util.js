@@ -18,4 +18,4 @@
         return guid;
     };
 
-})(typeof exports === 'undefined'? this['wte_util']={}: exports);
+})(typeof exports === 'undefined'? this['vte_util']={}: exports);

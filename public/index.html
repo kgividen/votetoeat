@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html ng-app="myApp">
 <head>
-    <title>Where To Eat</title>
+    <title>Vote To Eat</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Where To Eat</title>
+    <title>Vote To Eat</title>
     <!--&lt;!&ndash; HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries &ndash;&gt;-->
     <!--&lt;!&ndash;[if lt IE 9]>-->
     <!--<script src="../../assets/js/html5shiv.js"></script>-->
@@ -24,7 +24,7 @@
     <script src="js/lib/angular-animate-1.2.15.min.js"></script>
 
 </head>
-<body ng-controller="wteController" role="document">
+<body ng-controller="vteController" role="document">
 
 <nav class="navbar navbar-inverse navbar-fixed-top">
     <div class="container">
@@ -34,15 +34,15 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="#">Where To Eat</a>
+            <a class="navbar-brand" href="#">Vote To Eat</a>
         </div>
     </div>
 </nav>
 
 <div class="container" role="main">
     <div class="jumbotron">
-        <h1>Where To Eat!</h1>
-        <p>Tired of arguing about where to eat?  This site is for you.</p>
+        <h1>Vote To Eat!</h1>
+        <p>Tired of arguing about Vote to eat?  This site is for you.</p>
         <p id="createGroupBox" ng-show="showGroupBox">
             <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#createGroupModal">Create Group &raquo;</button>
             <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#joinGroupModal">Join Group &raquo;</button>
@@ -123,7 +123,7 @@
     <hr>
 
     <footer>
-        <p>&copy; Where To Eat 2015</p>
+        <p>&copy; Vote To Eat 2015</p>
     </footer>
 
 </div>
@@ -188,7 +188,7 @@
 <script type='text/javascript' src='/socket.io/socket.io.js'></script>
 <script src="js/lib/underscore-1.6.0.min.js"></script>
 
-<script type="text/javascript" src='js/wte_util.js'></script>
+<script type="text/javascript" src='js/vte_util.js'></script>
 <script type="text/javascript" src='js/services.js'></script>
 <!--<script type="text/javascript" src='/javascripts/filters.js'></script>-->
 <script type="text/javascript" src='js/controllers.js'></script>
