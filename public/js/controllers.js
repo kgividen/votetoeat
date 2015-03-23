@@ -10,9 +10,21 @@ function vteController($scope, $filter, $http, socket, growl) {
 
     $scope.createGroup = function () {
         //todo: make sure name is unique?
-        var group_guid = vte_util.createGuid();
-        $scope.group_guid = group_guid;
-        $("#enterNameModal").modal('show');
+        //var group_guid = vte_util.createGuid();
+        //$scope.group_guid = group_guid;
+        //TODO get groups and check for duplicate
+
+        //
+        socket.emit('check_group_name', {
+            group: $scope.groupName
+        },function(duplicate){
+            if(duplicate){
+                growl.error("Duplicate name please try again.", {ttl: 2000, disableCountDown: true, referenceId:"generalMessages"});
+
+            } else {
+                $("#enterNameModal").modal('show');
+            }
+        });
     };
 
     $scope.joinGroup = function () {
@@ -43,6 +55,11 @@ function vteController($scope, $filter, $http, socket, growl) {
     };
 
     $scope.addPlace = function() {
+        //check for duplicates
+        if(_.findWhere($scope.places,{"name": $scope.placeName})){
+            growl.error("Cannot add a duplicate place!");
+            return;
+        }
         var place = {
             "name" : $scope.placeName,
             "votes" : 0

@@ -67,8 +67,6 @@ module.exports = function (socket) {
                 callback(group);
             }
         }
-
-
     });
 
     // broadcast a user's message to other users
@@ -125,6 +123,14 @@ module.exports = function (socket) {
 
         voter.votesLeft = voter.votesLeft - data.newVote;
     });
+
+    socket.on('check_group_name', function(data, callback) {
+        //Find out if group exists add this user as a member then emit the new array.
+        if (callback) {
+            callback(_.findWhere(groups,{"name": data.group}));
+        }
+    });
+
 
     // clean up when a user leaves, and broadcast it to other users
     socket.on('disconnect', function (data) {
