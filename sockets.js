@@ -4,32 +4,43 @@ var _ = require('underscore');
 //    {
 //        "name": "group1",
 //        "members":[{
-//                      "name":"c1",
-//                      "votesLeft": 10,
-//                  },{
-//                      "name":"f1",
-//                      "votesLeft":10
+//            "name":"c1"
+//        },{
+//            "name":"f1"
 //        }],
 //        "places":[{
 //            "name":"Cafe Rio",
-//            "voters": {
+//            "voters": [
+//                {
 //                    "name" : "c1",
-//                    "votes" : 10
+//                    "vote" : 10
+//                },
+//                {
+//                    "name" : "f1",
+//                    "vote" : 5
 //                }
+//            ]
 //        }]
 //    },
 //    {
 //        "name": "group2",
 //        "members":[{
-//                      "name":"c1",
-//                      "votesLeft": 10,
-//                  },{
-//                      "name":"f1",
-//                      "votesLeft":10
+//            "name":"c1"
+//        },{
+//            "name":"f1"
 //        }],
 //        "places":[{
 //            "name":"Culvers",
-//            "votes":10
+//            "voters": [
+//                {
+//                    "name" : "c1",
+//                    "vote" : 2
+//                },
+//                {
+//                    "name" : "f1",
+//                    "vote" : 10
+//                }
+//            ]
 //        }]
 //    }
 //]
