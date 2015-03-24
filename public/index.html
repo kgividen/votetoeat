@@ -73,12 +73,13 @@
                     <div class="col-md-2">
                         <span ng-bind="place.name"></span>
                     </div>
-                    <div class="col-md-8">
-                        <button class="btn btn-default" ng-disabled="votesLeft<=0" data-toggle="tab" ng-click="voteForPlace(place,$index + 1)" ng-repeat="i in getNumber(vote_max + 1) track by $index + 1" >
-                            {{$index + 1}}
-                        </button>
-                        &nbsp
-                        <span ng-bind="place.votes"></span><span>&nbsp total</span>
+                    <div class="col-md-10">
+                        <div class="btn-group">
+                            <button class="btn btn-default" ng-class="{'active':place.voteBtnActive == $index }" ng-click="voteForPlace(place,$index)" ng-repeat="i in getNumber(vote_max) track by $index" >
+                            {{$index}}
+                            </button>
+                        </div>
+                        <span ng-bind="place.totalVotes"></span><span>&nbsp total</span>
                     </div>
                 </div>
             </div>
@@ -91,9 +92,6 @@
                 <div class="row" ng-repeat="user in users">
                     <div class="col-md-3">
                         <span ng-bind="user.name"></span>
-                        <span> has</span>
-                        <span ng-bind="user.votesLeft"></span>
-                        <span> votes left.</span>
                     </div>
                 </div>
             </div>

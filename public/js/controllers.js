@@ -1,20 +1,19 @@
 function vteController($scope, $filter, $http, socket, growl) {
     $scope.users = [];
     $scope.places = [];
-    $scope.vote_max = 8;
-    $scope.votesLeft = 10;
+    $scope.vote_max = 10;
     $scope.voted = false;
     $scope.showGroupBox = true;
     $scope.showMainApp = false;
     $scope.groupName = "";
+    $scope.voteBtnActive = 0;
 
     $scope.createGroup = function () {
         //todo: make sure name is unique?
         //var group_guid = vte_util.createGuid();
         //$scope.group_guid = group_guid;
-        //TODO get groups and check for duplicate
 
-        //
+        //Get groups and check for duplicate
         socket.emit('check_group_name', {
             group: $scope.groupName
         },function(duplicate){
@@ -35,8 +34,7 @@ function vteController($scope, $filter, $http, socket, growl) {
     $scope.addUser = function() {
         var nUser = {
             //"id" : vte_util.createGuid(),
-            "name" : $scope.userName,
-            "votesLeft" : "10"
+            "name" : $scope.userName
         };
 
         socket.emit('join_group', {
@@ -45,6 +43,11 @@ function vteController($scope, $filter, $http, socket, growl) {
         },function(data){
             $scope.users = data.members;
             $scope.places = data.places;
+
+            //update the totals of the votes since we just joined.
+            _.each($scope.places, function(place){
+                updateVotesOnPlace(place);
+            })
         });
 
         //Tell the user it happened.
@@ -64,49 +67,49 @@ function vteController($scope, $filter, $http, socket, growl) {
         }
         var place = {
             "name" : $scope.placeName,
-            "votes" : 0
+            "voters" : []
         };
 
         //Update local UI
         $scope.places.push(place);
 
         //send place to the other clients
-        var obj = {};
-        obj.group = $scope.groupName;
-        obj.place = place;
-        socket.emit('send:newPlace', obj);
+        var newPlace = {
+            "group" : $scope.groupName,
+            "place" : place
+        };
+        socket.emit('send:newPlace', newPlace);
 
         //growl.info(place.name + " was added as a place to eat by " + $scope.userName +"!", {ttl: 2000, disableCountDown: true});
         growl.info(place.name + " was added as a place to eat by " + $scope.userName +"!");
     };
 
     $scope.voteForPlace = function(place,n) {
-        if($scope.votesLeft > 0 && $scope.votesLeft - n >= 0){
-            //todo: disable that buttonbar so they can't revote on that item.
-            $scope.votesLeft = $scope.votesLeft - n;
-            if(!place.votes){
-                place.votes = 0;
-            }
-            place.votes = parseInt(place.votes) + n;
+        //update the button group
+        place["voteBtnActive"] = n;
+        var votedForGroup = false;
+        if(!votedForGroup){
+            //todo: Be able to update button bar to change vote.
+            //Get this user and flag bar as voted
+            //var user = _.find($scope.users, function(user){
+            //    return user.name == $scope.userName;
+            //});
+            var newPlace = {
+                "name" : place.name,
+                "group" : $scope.groupName,
+                "voter" : $scope.userName,
+                "vote" : n
+            };
 
-            //Subtract votes from this user
-            var user = _.find($scope.users, function(user){
-                return user.name == $scope.userName;
-            });
-
-            user.votesLeft = $scope.votesLeft;
+            updateVotesOnPlace(newPlace);
 
             //Send this to everyone else
-            place.newVote = n;
-            place.newVoter = $scope.userName;
-            place.group = $scope.groupName;
-
-            socket.emit('send:vote', place);
+            socket.emit('send:vote', newPlace);
 
             //Tell the user it happened
-            growl.info(place.name + " had " + n + " votes added by " + place.newVoter + "!");
+            growl.info(newPlace.name + " was voted " + n + " by " + newPlace.voter + "!");
         }else{
-            growl.error("Sorry not enough votes left!");
+            growl.error("Sorry you've already voted for this group!");
         }
     };
 
@@ -144,23 +147,7 @@ function vteController($scope, $filter, $http, socket, growl) {
 
     //When someone votes we need to update the total.
     socket.on('send:vote', function (place) {
-        //get the correct place from the scope based on the ID.
-        var currentPlace = _.find($scope.places, function(p){
-            return p.name == place.name;
-        });
-        if(!currentPlace.votes){
-            currentPlace.votes = 0;
-        }
-        currentPlace.votes = currentPlace.votes + place.newVote;
-
-        //TODO Take vote away from correct user
-        var voter = _.find($scope.users, function(user){
-            return user.name == place.newVoter;
-        });
-
-        voter.votesLeft = voter.votesLeft - place.newVote;
-        // Notify everyone that a new vote happened a message to our messages model
-        growl.info(currentPlace.name + " had " + place.newVote + " votes added by " + place.newVoter + "!");
+        updateVotesOnPlace(place);
     });
 
     socket.on('user:left', function(user) {
@@ -176,6 +163,39 @@ function vteController($scope, $filter, $http, socket, growl) {
     });
 
 
+    function updateVotesOnPlace(place){
+        //get the correct place from the scope based on the name.
+        var currentPlace = _.find($scope.places, function(p){
+            return p.name == place.name;
+        });
+        var voter = _.findWhere(currentPlace.voters, {"name" : place.voter});
+        //if the voter exists then update his vote.  Otherwise add the voter to the scope.
+        if(voter){
+            voter.vote = place.vote;
+        } else {
+            var obj = {
+                "name" : place.voter,
+                "vote" : place.vote
+            };
+
+            currentPlace.voters.push(obj);
+        }
+
+        //Update the total of votes for the current place
+        var totalVotes = 0;
+        _.each(currentPlace.voters, function(voter) {
+            if(voter.vote) {
+                totalVotes += voter.vote;
+            }
+        });
+
+        console.log("Total votes for: " + currentPlace.name + " is: " + totalVotes);
+
+        currentPlace.totalVotes = totalVotes;
+
+        growl.info(currentPlace.name + " received " + place.vote + " votes by " + place.voter + "!");
+
+    }
     //Utility methods
     // ================
 

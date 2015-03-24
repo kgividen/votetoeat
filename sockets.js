@@ -12,7 +12,10 @@ var _ = require('underscore');
 //        }],
 //        "places":[{
 //            "name":"Cafe Rio",
-//            "votes":10
+//            "voters": {
+//                    "name" : "c1",
+//                    "votes" : 10
+//                }
 //        }]
 //    },
 //    {
@@ -98,7 +101,6 @@ module.exports = function (socket) {
         var group = _.findWhere(groups,{"name": groupName});
         if(group){
             group.places.push(data.place);
-            //socket.in(groupName).emit('send:updateGroup', groupInArray);
             socket.in(groupName).emit('send:newPlace', data);
         }
     });
@@ -115,14 +117,20 @@ module.exports = function (socket) {
         var place = _.find(groupArray.places, function(place){
             return place.name == data.name;
         });
-        place.votes = place.votes + data.newVote;
 
-        //substract the votes from the user so it's tracked in the variables
-        var voter = _.find(groupArray.members, function(member){
-            return member.name == data.newVoter;
-        });
-
-        voter.votesLeft = voter.votesLeft - data.newVote;
+        //Modify the vote but if we're the first voter we need to add them
+        var voter = _.findWhere(place.voters, {"name":data.voter});
+        if(voter) {
+            //modify voters votes
+            voter.vote = data.vote;
+        } else {
+            //add voters votes
+            var obj = {
+                "name" : data.voter,
+                "vote" : data.vote
+            };
+            place.voters.push(obj);
+        }
     });
 
     socket.on('check_group_name', function(data, callback) {
