@@ -54,7 +54,7 @@ function vteController($scope, $filter, $http, socket, growl) {
         $scope.showGroupBox = false;
         $scope.showMainApp = true;
 
-        growl.success("Welcome!  Let's find out Vote To Eat!");
+        growl.success("Welcome!  Let's Vote To Eat!");
     };
 
     $scope.addPlace = function() {
@@ -90,30 +90,18 @@ function vteController($scope, $filter, $http, socket, growl) {
     $scope.voteForPlace = function(place,n) {
         //update the button group
         place["voteBtnActive"] = n;
-        var votedForGroup = false;
-        if(!votedForGroup){
-            //todo: Be able to update button bar to change vote.
-            //Get this user and flag bar as voted
-            //var user = _.find($scope.users, function(user){
-            //    return user.name == $scope.userName;
-            //});
-            var newPlace = {
-                "name" : place.name,
-                "group" : $scope.groupName,
-                "voter" : $scope.userName,
-                "vote" : n
-            };
 
-            updateVotesOnPlace(newPlace);
+        var newPlace = {
+            "name" : place.name,
+            "group" : $scope.groupName,
+            "voter" : $scope.userName,
+            "vote" : n
+        };
 
-            //Send this to everyone else
-            socket.emit('send:vote', newPlace);
+        updateVotesOnPlace(newPlace);
 
-            //Tell the user it happened
-            growl.info(newPlace.name + " was voted " + n + " by " + newPlace.voter + "!");
-        }else{
-            growl.error("Sorry you've already voted for this group!");
-        }
+        //Send this to everyone else
+        socket.emit('send:vote', newPlace);
     };
 
     // Socket listeners
