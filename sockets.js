@@ -1,5 +1,3 @@
-//TODO whereiwanttoeat.com, votetoeat.com is available
-
 var _ = require('underscore');
 
 //[
@@ -37,18 +35,19 @@ var groups = [];
 // export function for listening to the socket
 module.exports = function (socket) {
     socket.on('join_group', function(data, callback) {
-        socket.join(data.group);
-        socket.user_group = data.group;
+        var groupName = data.group.toUpperCase();
+        socket.join(groupName);
+        socket.user_group = groupName;
         socket.user_name = data.user.name;
 
         //Todo we probably want to move all this group array logic out to a database with some rest calls instead of handling it with socket.io and keeping it in memory
 
         //Find out if group exists add this user as a member then emit the new array.
-        var groupInArray = _.findWhere(groups,{"name": data.group});
+        var groupInArray = _.findWhere(groups,{"name": groupName});
         if(groupInArray){
             groupInArray.members.push(data.user);
-            //socket.in(data.group).emit('send:updateGroup', groupInArray);
-            socket.in(data.group).emit('send:newUser', data);
+            //socket.in(groupName).emit('send:updateGroup', groupInArray);
+            socket.in(groupName).emit('send:newUser', data);
             if (callback) {
                 callback(groupInArray);
             }
@@ -57,7 +56,7 @@ module.exports = function (socket) {
         } else {
             //new group
             var group = {
-                "name": data.group
+                "name": groupName
             };
             group.members = [];
             group.places = [];
@@ -71,7 +70,7 @@ module.exports = function (socket) {
 
     // broadcast a user's message to other users
     socket.on('send:message', function (data) {
-        socket.in(data.group).emit('send:message', {
+        socket.in(data.group.toUpperCase()).emit('send:message', {
             user: name,
             text: data.message
         });
@@ -79,35 +78,37 @@ module.exports = function (socket) {
 
     // broadcast a user has been added to other users
     socket.on('send:updateGroup', function (data) {
-        socket.in(data.group).emit('send:updateGroup', data);
+        socket.in(data.group.toUpperCase()).emit('send:updateGroup', data);
         socket.user_name = data.name;
     });
 
     socket.on('send:newUser', function (data) {
-        socket.in(data.group).emit('send:newUser', data);
+        socket.in(data.group.toUpperCase()).emit('send:newUser', data);
         socket.user_name = data.user.name;
     });
 
     socket.on('user:left', function (data) {
-        socket.in(data.group).emit('user:left', data);
+        socket.in(data.group.toUpperCase()).emit('user:left', data);
     });
 
     // broadcast a place has been added to other users
     socket.on('send:newPlace', function (data) {
+        var groupName = data.group.toUpperCase();
         //add new place to group
-        var group = _.findWhere(groups,{"name": data.group});
+        var group = _.findWhere(groups,{"name": groupName});
         if(group){
             group.places.push(data.place);
-            //socket.in(data.group).emit('send:updateGroup', groupInArray);
-            socket.in(data.group).emit('send:newPlace', data);
+            //socket.in(groupName).emit('send:updateGroup', groupInArray);
+            socket.in(groupName).emit('send:newPlace', data);
         }
     });
 
     // broadcast a place has been added to other users
     socket.on('send:vote', function (data) {
-        socket.in(data.group).emit('send:vote', data);
+        var groupName = data.group.toUpperCase();
+        socket.in(groupName).emit('send:vote', data);
         var groupArray = _.find(groups, function(group){
-            return group.name == data.group;
+            return group.name == groupName;
         });
 
         //update the place with the votes
@@ -127,7 +128,7 @@ module.exports = function (socket) {
     socket.on('check_group_name', function(data, callback) {
         //Find out if group exists add this user as a member then emit the new array.
         if (callback) {
-            callback(_.findWhere(groups,{"name": data.group}));
+            callback(_.findWhere(groups,{"name": data.group.toUpperCase()}));
         }
     });
 
