@@ -80,6 +80,9 @@ function vteController($scope, $filter, $http, socket, growl) {
         };
         socket.emit('send:newPlace', newPlace);
 
+        //clear input box
+        $scope.placeName = "";
+
         //growl.info(place.name + " was added as a place to eat by " + $scope.userName +"!", {ttl: 2000, disableCountDown: true});
         growl.info(place.name + " was added as a place to eat by " + $scope.userName +"!");
     };
@@ -161,6 +164,21 @@ function vteController($scope, $filter, $http, socket, growl) {
             }
         }
     });
+
+
+    //set default focuses
+    $('#createGroupModal').on('shown.bs.modal', function () {
+        $('#input_group_name').focus();
+    });
+
+    $('#joinGroupModal').on('shown.bs.modal', function () {
+        $('#join_group_name').focus();
+    });
+
+    $('#enterNameModal').on('shown.bs.modal', function () {
+        $('#input_userName').focus();
+    });
+
 
 
     function updateVotesOnPlace(place){
