@@ -6,3 +6,11 @@ body {
     padding-top: 70px;
     padding-bottom: 30px;
 }
+
+#yelpBusinesses {
+    /*height:300px;*/
+    /*overflow: auto*/
+
+    max-height: calc(100vh - 210px);
+    overflow-y: auto;
+}

@@ -7,6 +7,8 @@ function vteController($scope, $filter, $http, socket, growl) {
     $scope.showMainApp = false;
     $scope.groupName = "";
     $scope.voteBtnActive = 0;
+    $scope.yelpData = "";
+    $scope.yelpCity = "";
 
     $scope.createGroup = function () {
         //todo: make sure name is unique?
@@ -60,31 +62,10 @@ function vteController($scope, $filter, $http, socket, growl) {
     $scope.addPlace = function() {
         if (!$scope.placeName) return;  //make sure they've entered a place name.
 
-        //check for duplicates
-        if(_.findWhere($scope.places,{"name": $scope.placeName})){
-            growl.error("Cannot add a duplicate place!");
-            return;
-        }
-        var place = {
-            "name" : $scope.placeName,
-            "voters" : []
-        };
-
-        //Update local UI
-        $scope.places.push(place);
-
-        //send place to the other clients
-        var newPlace = {
-            "group" : $scope.groupName,
-            "place" : place
-        };
-        socket.emit('send:newPlace', newPlace);
-
+        _addplace($scope.placeName);
         //clear input box
         $scope.placeName = "";
 
-        //growl.info(place.name + " was added as a place to eat by " + $scope.userName +"!", {ttl: 2000, disableCountDown: true});
-        growl.info(place.name + " was added as a place to eat by " + $scope.userName +"!");
     };
 
     $scope.voteForPlace = function(place,n) {
@@ -202,7 +183,45 @@ function vteController($scope, $filter, $http, socket, growl) {
         growl.info(currentPlace.name + " received " + place.vote + " votes by " + place.voter + "!");
 
     }
-    //Utility methods
+
+    $scope.addYelpBusiness = function(business) {
+        _addPlace(business.name);
+    };
+    //YELP calls
+    $scope.getYelpData = function (){
+        $http.get("/yelp/" + $scope.yelpCity).success(function (doc) {
+            console.log(doc);
+            $scope.yelpData = doc;
+        });
+    };
+
+//*******Internal functions*********
+    function _addPlace(name) {
+        //check for duplicates
+        if(_.findWhere($scope.places,{"name": name})){
+            growl.error("Cannot add a duplicate place!");
+            return;
+        }
+        var place = {
+            "name" : name,
+            "voters" : []
+        };
+
+        //Update local UI
+        $scope.places.push(place);
+
+        //send place to the other clients
+        var newPlace = {
+            "group" : $scope.groupName,
+            "place" : place
+        };
+        socket.emit('send:newPlace', newPlace);
+
+        //growl.info(place.name + " was added as a place to eat by " + $scope.userName +"!", {ttl: 2000, disableCountDown: true});
+        growl.info(place.name + " was added as a place to eat by " + $scope.userName +"!");
+    }
+
+    //Utility functions
     // ================
 
     $scope.getNumber = function(num) {

@@ -15,6 +15,7 @@ var app = express();
 // view engine setup
 //app.set('views', path.join(__dirname, 'views'));
 //app.set('view engine', 'jade');
+app.set('view engine', 'jade');
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(__dirname + '/public/favicon.ico'));
@@ -30,11 +31,11 @@ app.use(express.static(__dirname + '/public'));
 //app.use('/users', users);
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  var err = new Error('Not Found');
-  err.status = 404;
-  next(err);
-});
+//app.use(function(req, res, next) {
+//  var err = new Error('Not Found');
+//  err.status = 404;
+//  next(err);
+//});
 
 // error handlers
 
@@ -60,6 +61,29 @@ if (app.get('env') === 'development') {
 //  });
 //});
 
+var yelp = require("yelp").createClient({
+    consumer_key: "xxx",
+    consumer_secret: "xxx",
+    token: "xxx",
+    token_secret: "xxx"
+});
+
+//// return list of snippet _ids and 200 OK
+//app.get('/sss/idm/', function(req, res, next) {
+//    db.getListOfSnippets(function(e, results){
+//        if (e) return next(e);
+//        res.send(results);
+//    });
+//});
+
+// return list of snippet _ids and 200 OK
+app.get('/yelp/:location', function(req, res, next) {
+    yelp.search({term: "food", location: req.params.location}, function(error, data) {
+        console.log(error);
+        //console.log(data);
+        res.send(data);
+    });
+});
 
 
 module.exports = app;
