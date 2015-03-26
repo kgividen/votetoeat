@@ -8,6 +8,7 @@ function vteController($scope, $filter, $http, socket, growl) {
     $scope.groupName = "";
     $scope.voteBtnActive = 0;
     $scope.yelpData = "";
+    $scope.googleLocalData = [];
     $scope.location = "";
 
     $scope.createGroup = function () {
@@ -62,10 +63,12 @@ function vteController($scope, $filter, $http, socket, growl) {
     $scope.addPlace = function() {
         if (!$scope.placeName) return;  //make sure they've entered a place name.
 
-        _addPlace($scope.placeName);
+        _addPlace({
+            "name":$scope.placeName
+        });
+
         //clear input box
         $scope.placeName = "";
-
     };
 
     $scope.voteForPlace = function(place,n) {
@@ -135,6 +138,7 @@ function vteController($scope, $filter, $http, socket, growl) {
     });
 
 
+
     //set default focuses
     $('#createGroupModal').on('shown.bs.modal', function () {
         $('#input_group_name').focus();
@@ -148,14 +152,29 @@ function vteController($scope, $filter, $http, socket, growl) {
         $('#input_userName').focus();
     });
 
-    $scope.addYelpBusiness = function(business) {
-        _addPlace(business.name);
-        growl.info("Business Added", {ttl: 1000, disableCountDown: true, referenceId:"yelpSuggestionsMessages"});
+    $scope.addBusiness = function(business, type) {
+        var address = "";
+         var rating_img_url = "";
 
+        if(type=="yelp") {
+            address = business.location.display_address.toString();
+            rating_img_url = business.rating_img_url;
+        } else if(business.vicinity) {
+            address = business.vicinity;
+        }
+
+        _addPlace({
+            "name" : business.name,
+            "url" : business.url,
+            "fromType" : type,
+            "address" : address,
+            "rating" : business.rating,
+            "rating_img_url" : rating_img_url
+        });
+        growl.info("Business Added", {ttl: 1000, disableCountDown: true, referenceId:"googleLocalSuggestionsMessages"});
     };
     //YELP calls
     $scope.getYelpData = function (type){
-
         if (type == "city"){
             $http.get("/yelp/city/" + $scope.location).success(function (doc) {
                 $scope.yelpData = doc;
@@ -175,15 +194,54 @@ function vteController($scope, $filter, $http, socket, growl) {
         }
     };
 
+    //Google Local calls
+    $('#googleLocalModal').on('shown.bs.modal', function () {
+        getGoogleLocalData();
+    });
+
+    var getGoogleLocalData = function (){
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function (position) {
+                var pyrmont = new google.maps.LatLng(position.coords.latitude,position.coords.longitude);
+
+                map = new google.maps.Map(document.getElementById('map'), {
+                    center: pyrmont,
+                    zoom: 15
+                });
+
+                var request = {
+                    location: pyrmont,
+                    //radius: '5000',
+                    types: ['restaurant'],
+                    rankBy: google.maps.places.RankBy.DISTANCE
+                };
+
+                service = new google.maps.places.PlacesService(map);
+                service.nearbySearch(request, function(results, status){
+                    $scope.$apply(function() {
+                        if (status == google.maps.places.PlacesServiceStatus.OK) {
+                            $scope.googleLocalData = results;
+                        }
+                    });
+                });
+            });
+        }
+    };
+
 //*******Internal functions*********
-    function _addPlace(name) {
+    function _addPlace(p) {
         //check for duplicates
-        if(_.findWhere($scope.places,{"name": name})){
+        if(_.findWhere($scope.places,{"name": p.name})){
             growl.error("Cannot add a duplicate place!");
             return;
         }
         var place = {
-            "name" : name,
+            "name" : p.name,
+            "url" : p.url,
+            "address" : p.address,
+            "fromType": p.fromType,
+            "rating" : p.rating,
+            "rating_img_url" : p.rating_img_url,
             "voters" : []
         };
 
@@ -231,7 +289,10 @@ function vteController($scope, $filter, $http, socket, growl) {
 
         currentPlace.totalVotes = totalVotes;
 
-        growl.info(currentPlace.name + " received " + place.vote + " votes by " + place.voter + "!");
+        //we check for votes because when coming in new we don't need to growl all the previous places
+        if(place.vote) {
+            growl.info(currentPlace.name + " received " + place.vote + " votes by " + place.voter + "!");
+        }
 
     }
 

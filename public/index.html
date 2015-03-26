@@ -67,7 +67,8 @@
     </div>
 </div>
 <!--<button class="btn btn-link" data-toggle="modal" data-target="#yelpSuggestionsModal">Yelp Suggestions</button>-->
-
+<!--<button class="btn btn-link" data-toggle="modal" data-target="#googleLocalModal">Google Local Suggestions</button>-->
+<div id="map"></div>
 
 <div id="main_app" class="container" ng-cloak ng-show="showMainApp">
     <div class="row">
@@ -85,20 +86,41 @@
                 </div>
                 <button type="submit" class="btn btn-primary" data-dismiss="modal" ng-click="addPlace()">Add</button>
                 <button class="btn btn-link" data-toggle="modal" data-target="#yelpSuggestionsModal">Yelp Suggestions</button>
+                <button class="btn btn-link" data-toggle="modal" data-target="#googleLocalModal">Google Local Suggestions</button>
             </form>
             <div class="col-md-12" ng-class="{true: 'well'}[places.length > 0]">
                 <div class="row" ng-repeat="place in places">
-                    <div class="col-md-2">
-                        <span ng-bind="place.name"></span>
-                    </div>
-                    <div class="col-md-10">
-                        <div class="btn-group">
-                            <button class="btn btn-default" ng-class="{'active':place.voteBtnActive == $index }" ng-click="voteForPlace(place,$index)" ng-repeat="i in getNumber(vote_max) track by $index" >
-                            {{$index}}
-                            </button>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <a target="_blank" ng-href="http://google.com/maps?q={{place.name}}">
+                                <h4 class="display-inline" ng-bind="place.name"></h4>
+                            </a>
+                            <span ng-hide="place.fromType!='googleLocal'">
+                                <a target="_blank"  ng-href="http://google.com/local?q={{place.name}},{{place.address}}">
+                                    <img class="googleLogo" alt="googleLocal" src="https://www.google.com/images/srpr/logo1w.png">
+                                    <rating ng-model="place.rating" readonly="true"></rating>
+                                </a>
+                            </span>
+                            <span ng-hide="place.fromType!='yelp'">
+                                <a target="_blank" ng-href="{{place.url}}">
+                                    <img alt="yelp" src="https://s3-media1.fl.yelpcdn.com/assets/2/www/img/14f29ad24935/map/miniMapLogo.png">
+                                    <img ng-src="{{place.rating_img_url}}">
+                                </a>
+                            </span>
+                            <a title="{{place.address}}" target="_blank" ng-href="http://google.com/maps?q={{place.name}},{{place.address}}">
+                                <div class="indent-5"><small ng-bind="place.address"></small></div>
+                            </a>
                         </div>
-                        <span ng-bind="place.totalVotes"></span><span>&nbsp total</span>
+                        <div class="col-md-8">
+                            <div class="btn-group">
+                                <button class="btn btn-default" ng-class="{'active':place.voteBtnActive == $index }" ng-click="voteForPlace(place,$index)" ng-repeat="i in getNumber(vote_max) track by $index" >
+                                {{$index}}
+                                </button>
+                            </div>
+                            <span ng-bind="place.totalVotes"></span><span>&nbsp total</span>
+                        </div>
                     </div>
+                    <br/>
                 </div>
             </div>
         </div>
@@ -123,7 +145,7 @@
 
 <div>
     <!--Debug showing the scope -->
-    <!--<pre ng-bind="location | json"></pre>-->
+    <!--<pre ng-bind="googleLocalData |json"></pre>-->
     <hr>
 
     <footer>
@@ -200,7 +222,7 @@
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 <h4 class="modal-title" >Yelp Suggestions</h4>
             </div>
-            <div id="yelpBusinesses" class="modal-body">
+            <div class="businessesList modal-body">
                 <form class="form-inline">
                     <div class="form-group">
                         <label for="yelp_city">Enter City</label>
@@ -212,7 +234,7 @@
                     </button>
                     <div>
                         <div ng-repeat="business in yelpData.businesses">
-                            <button class="btn btn-link" title="Add Place" ng-click="addYelpBusiness(this.business)">{{business.name}}</button>
+                            <button class="btn btn-link" title="Add Place" ng-click="addBusiness(business,'yelp')">{{business.name}}</button>
                             <a target="_blank" ng-href="{{business.url}}">
                                 <img title="Open in Yelp" ng-src="{{business.rating_img_url}}">
                             </a>
@@ -234,12 +256,52 @@
     </div>
 </div>
 
+<div id="googleLocalModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="googleLocalModal" aria-hidden="true">
+    <div growl reference="googleLocalSuggestionsMessages"></div>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" >Google Local Suggestions</h4>
+            </div>
+            <div class="businessesList modal-body">
+                <form class="form-inline">
+                    <div class="form-group">
+                        <div>
+                            <span ng-hide="googleLocalData.length>0">Loading . . .</span>
+                            <div ng-repeat="business in googleLocalData">
+                                <button class="btn btn-link" title="Add Place" ng-click="addBusiness(business,'googleLocal')">{{business.name}}</button>
+                                <a target="_blank" ng-href="http://google.com/local?q={{business.name}},{{business.vicinity}}">
+                                    <img class="googleLogo" title="Open in Google" alt="googleLocal" src="https://www.google.com/images/srpr/logo1w.png">
+                                </a>
+                                <a target="_blank" ng-href="http://google.com/local?q={{business.name}},{{business.vicinity}}">
+                                    <rating ng-model="business.rating" readonly="true"></rating>
+                                </a>
+                                <a target="_blank" ng-href="http://google.com/maps?q={{business.name}},{{business.vicinity}}">
+                                    <small ng-bind="business.vicinity"></small>
+                                </a>
+
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-primary pull-right" data-dismiss="modal">Done</button>
+                <img class="pull-left" src="https://maps.gstatic.com/mapfiles/api-3/images/powered-by-google-on-white2.png"/>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- JavaScript Files================================================== -->
 <!-- Placed at the end of the document so the pages load faster -->
 <script src="http://codeorigin.jquery.com/jquery-1.10.2.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.12.1/ui-bootstrap-tpls.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.6.0/underscore-min.js"></script>
 <script src='https://cdn.socket.io/socket.io-1.3.4.js'></script>
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?libraries=places"></script>
 
 <script type="text/javascript" src='js/vte_util.js'></script>
 <script type="text/javascript" src='js/services.js'></script>

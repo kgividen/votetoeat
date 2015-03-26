@@ -7,10 +7,19 @@ body {
     padding-bottom: 30px;
 }
 
-#yelpBusinesses {
-    /*height:300px;*/
-    /*overflow: auto*/
-
+.businessesList {
     max-height: calc(100vh - 210px);
     overflow-y: auto;
+}
+
+.display-inline {
+    display: inline;
+}
+.indent-5 {
+    margin-left: 5px;
+}
+
+.googleLogo {
+    width: 55px;
+    height: 19px;
 }
