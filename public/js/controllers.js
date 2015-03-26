@@ -255,8 +255,7 @@ function vteController($scope, $filter, $http, socket, growl) {
         };
         socket.emit('send:newPlace', newPlace);
 
-        //growl.info(place.name + " was added as a place to eat by " + $scope.userName +"!", {ttl: 2000, disableCountDown: true});
-        growl.info(place.name + " was added as a place to eat by " + $scope.userName +"!");
+        growl.info("<b>" + place.name + "</b> was added as a place to eat by <b>" + $scope.userName +"</b>");
     }
 
     function _updateVotesOnPlace(place){
