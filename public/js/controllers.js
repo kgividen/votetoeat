@@ -62,7 +62,7 @@ function vteController($scope, $filter, $http, socket, growl) {
     $scope.addPlace = function() {
         if (!$scope.placeName) return;  //make sure they've entered a place name.
 
-        _addplace($scope.placeName);
+        _addPlace($scope.placeName);
         //clear input box
         $scope.placeName = "";
 
@@ -218,7 +218,7 @@ function vteController($scope, $filter, $http, socket, growl) {
         socket.emit('send:newPlace', newPlace);
 
         //growl.info(place.name + " was added as a place to eat by " + $scope.userName +"!", {ttl: 2000, disableCountDown: true});
-        growl.info(place.name + " was added as a place to eat by " + $scope.userName +"!");
+        growl.info("<b>" + place.name + "</b> was added as a place to eat by <b>" + $scope.userName +"</b>");
     }
 
     //Utility functions
