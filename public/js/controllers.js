@@ -8,7 +8,7 @@ function vteController($scope, $filter, $http, socket, growl) {
     $scope.groupName = "";
     $scope.voteBtnActive = 0;
     $scope.yelpData = "";
-    $scope.yelpCity = "";
+    $scope.location = "";
 
     $scope.createGroup = function () {
         //todo: make sure name is unique?
@@ -48,7 +48,7 @@ function vteController($scope, $filter, $http, socket, growl) {
 
             //update the totals of the votes since we just joined.
             _.each($scope.places, function(place){
-                updateVotesOnPlace(place);
+                _updateVotesOnPlace(place);
             })
         });
 
@@ -79,7 +79,7 @@ function vteController($scope, $filter, $http, socket, growl) {
             "vote" : n
         };
 
-        updateVotesOnPlace(newPlace);
+        _updateVotesOnPlace(newPlace);
 
         //Send this to everyone else
         socket.emit('send:vote', newPlace);
@@ -119,7 +119,7 @@ function vteController($scope, $filter, $http, socket, growl) {
 
     //When someone votes we need to update the total.
     socket.on('send:vote', function (place) {
-        updateVotesOnPlace(place);
+        _updateVotesOnPlace(place);
     });
 
     socket.on('user:left', function(user) {
@@ -148,9 +148,58 @@ function vteController($scope, $filter, $http, socket, growl) {
         $('#input_userName').focus();
     });
 
+    $scope.addYelpBusiness = function(business) {
+        _addPlace(business.name);
+    };
+    //YELP calls
+    $scope.getYelpData = function (type){
 
+        if (type == "city"){
+            $http.get("/yelp/city/" + $scope.location).success(function (doc) {
+                $scope.yelpData = doc;
+            });
+        } else {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function (position) {
+                    $scope.$apply(function() {
+                        var cll = position.coords.latitude + "," + position.coords.longitude;
+                        $scope.location = cll;
+                        $http.get("/yelp/ll/" + cll).success(function (doc) {
+                            $scope.yelpData = doc;
+                        });
+                    });
+                });
+            }
+        }
+    };
 
-    function updateVotesOnPlace(place){
+//*******Internal functions*********
+    function _addPlace(name) {
+        //check for duplicates
+        if(_.findWhere($scope.places,{"name": name})){
+            growl.error("Cannot add a duplicate place!");
+            return;
+        }
+        var place = {
+            "name" : name,
+            "voters" : []
+        };
+
+        //Update local UI
+        $scope.places.push(place);
+
+        //send place to the other clients
+        var newPlace = {
+            "group" : $scope.groupName,
+            "place" : place
+        };
+        socket.emit('send:newPlace', newPlace);
+
+        //growl.info(place.name + " was added as a place to eat by " + $scope.userName +"!", {ttl: 2000, disableCountDown: true});
+        growl.info(place.name + " was added as a place to eat by " + $scope.userName +"!");
+    }
+
+    function _updateVotesOnPlace(place){
         //get the correct place from the scope based on the name.
         var currentPlace = _.find($scope.places, function(p){
             return p.name == place.name;
@@ -182,43 +231,6 @@ function vteController($scope, $filter, $http, socket, growl) {
 
         growl.info(currentPlace.name + " received " + place.vote + " votes by " + place.voter + "!");
 
-    }
-
-    $scope.addYelpBusiness = function(business) {
-        _addPlace(business.name);
-    };
-    //YELP calls
-    $scope.getYelpData = function (){
-        $http.get("/yelp/" + $scope.yelpCity).success(function (doc) {
-            console.log(doc);
-            $scope.yelpData = doc;
-        });
-    };
-
-//*******Internal functions*********
-    function _addPlace(name) {
-        //check for duplicates
-        if(_.findWhere($scope.places,{"name": name})){
-            growl.error("Cannot add a duplicate place!");
-            return;
-        }
-        var place = {
-            "name" : name,
-            "voters" : []
-        };
-
-        //Update local UI
-        $scope.places.push(place);
-
-        //send place to the other clients
-        var newPlace = {
-            "group" : $scope.groupName,
-            "place" : place
-        };
-        socket.emit('send:newPlace', newPlace);
-
-        //growl.info(place.name + " was added as a place to eat by " + $scope.userName +"!", {ttl: 2000, disableCountDown: true});
-        growl.info("<b>" + place.name + "</b> was added as a place to eat by <b>" + $scope.userName +"</b>");
     }
 
     //Utility functions

@@ -121,7 +121,7 @@
 
 <div>
     <!--Debug showing the scope -->
-    <!--<pre ng-bind="voted | json"></pre>-->
+    <!--<pre ng-bind="location | json"></pre>-->
     <hr>
 
     <footer>
@@ -201,12 +201,16 @@
                 <form class="form-inline">
                     <div class="form-group">
                         <label for="yelp_city">Enter City</label>
-                        <input type="text" class="form-control" id="yelp_city" placeholder="City" ng-model="yelpCity">
+                        <input type="text" class="form-control" id="yelp_city" placeholder="City" ng-model="location">
                     </div>
-                    <button class="btn btn-primary" ng-click="getYelpData()">Check Yelp</button>
+                    <button class="btn btn-primary" ng-click="getYelpData('city')">Yelp By City</button>
+                    <button class="btn btn-primary" title="Get Current Location" ng-click="getYelpData('cll')">
+                        <span class="glyphicon glyphicon-map-marker hand"  aria-hidden="true" ></span>
+                    </button>
                     <div>
                         <div ng-repeat="business in yelpData.businesses">
                             <button class="btn btn-link" ng-click="addYelpBusiness(this.business)">{{business.name}}</button>
+                            <span><small>{{business.location.address[0]}}, {{business.location.city}}, {{business.location.state_code}}, {{business.location.postal_code}}</small></span>
                         </div>
                     </div>
                 </form>
@@ -218,7 +222,6 @@
         </div>
     </div>
 </div>
-
 
 <!-- JavaScript Files================================================== -->
 <!-- Placed at the end of the document so the pages load faster -->
