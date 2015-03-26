@@ -11,19 +11,11 @@ var express = require('express'),
 
 var app = express();
 
-//If we want to use jade this is how we'd do it.
-// view engine setup
-//app.set('views', path.join(__dirname, 'views'));
-//app.set('view engine', 'jade');
-app.set('view engine', 'jade');
-
-// uncomment after placing your favicon in /public
-//app.use(favicon(__dirname + '/public/favicon.ico'));
+app.use(favicon(__dirname + '/public/favicon.ico'));
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
-//app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(__dirname + '/public'));
 
 
@@ -68,15 +60,6 @@ var yelp = require("yelp").createClient({
     token_secret: "xxx"
 });
 
-//// return list of snippet _ids and 200 OK
-//app.get('/sss/idm/', function(req, res, next) {
-//    db.getListOfSnippets(function(e, results){
-//        if (e) return next(e);
-//        res.send(results);
-//    });
-//});
-
-// return list of snippet _ids and 200 OK
 app.get('/yelp/:location', function(req, res, next) {
     yelp.search({term: "food", location: req.params.location}, function(error, data) {
         console.log(error);
