@@ -150,6 +150,8 @@ function vteController($scope, $filter, $http, socket, growl) {
 
     $scope.addYelpBusiness = function(business) {
         _addPlace(business.name);
+        growl.info("Business Added", {ttl: 1000, disableCountDown: true, referenceId:"yelpSuggestionsMessages"});
+
     };
     //YELP calls
     $scope.getYelpData = function (type){
