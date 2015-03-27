@@ -41,19 +41,30 @@
 </head>
 <body ng-controller="vteController" role="document">
 
-<nav class="navbar navbar-inverse navbar-fixed-top">
-    <div class="container-fluid">
-        <!-- Brand and toggle get grouped for better mobile display -->
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="#">Vote To Eat</a>
-        </div>
-    </div>
-</nav>
+<!--<nav class="navbar navbar-inverse navbar-fixed-top">-->
+    <!--<div class="container-fluid">-->
+        <!--&lt;!&ndash; Brand and toggle get grouped for better mobile display &ndash;&gt;-->
+        <!--<div class="navbar-header">-->
+            <!--<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">-->
+                <!--<span class="icon-bar"></span>-->
+                <!--<span class="icon-bar"></span>-->
+                <!--<span class="icon-bar"></span>-->
+            <!--</button>-->
+            <!--<a class="navbar-brand" href="#">Vote To Eat</a>-->
+        <!--</div>-->
+    <!--</div>-->
+<!--</nav>-->
+<div class="container">
+<div class="header clearfix">
+    <nav>
+        <ul class="nav nav-pills pull-right">
+            <!--<li role="presentation" class="active"><a href="#">Home</a></li>-->
+            <!--<li role="presentation"><a href="#">About</a></li>-->
+            <!--<li role="presentation"><a href="#">Contact</a></li>-->
+        </ul>
+    </nav>
+    <h3 class="text-muted">Vote To Eat</h3>
+</div>
 
 <div class="container" role="main">
     <div class="jumbotron">
@@ -86,7 +97,7 @@
                 </div>
                 <button type="submit" class="btn btn-primary" data-dismiss="modal" ng-click="addPlace()">Add</button>
                 <button class="btn btn-link" data-toggle="modal" data-target="#yelpSuggestionsModal">Yelp Suggestions</button>
-                <button class="btn btn-link" data-toggle="modal" data-target="#googleLocalModal">Google Local Suggestions</button>
+                <button class="btn btn-link" data-toggle="modal" data-target="#googleLocalModal">Google Suggestions</button>
             </form>
             <div class="col-md-12" ng-class="{true: 'well'}[places.length > 0]">
                 <div class="row" ng-repeat="place in places">
@@ -153,7 +164,7 @@
     </footer>
 
 </div>
-
+</div> <!--Container-->
 
 <!--MODALS-->
 <div id="createGroupModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="createGroupModalLabel" aria-hidden="true">
@@ -300,7 +311,8 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.12.1/ui-bootstrap-tpls.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.6.0/underscore-min.js"></script>
-<script src='https://cdn.socket.io/socket.io-1.3.4.js'></script>
+<script src='https://cdn.socket.io/socket.io-1.3.5.js'></script>
+<!--<script src='http://www.votetoeat.com/socket.io/socket.io.js'></script>-->
 <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?libraries=places"></script>
 
 <script type="text/javascript" src='js/vte_util.js'></script>

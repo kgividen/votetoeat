@@ -117,7 +117,8 @@ function vteController($scope, $filter, $http, socket, growl) {
         $scope.places.push(data.place);
 
         // Notify everyone that a new person is here via a message to our messages model
-        growl.info(data.place.name + " was added as a place to eat!");
+        //TODO TEST THIS
+        growl.info("<b>" + place.name + "</b> was added as a place to eat by <b>" + $scope.userName +"</b>");
     });
 
     //When someone votes we need to update the total.
