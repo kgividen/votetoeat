@@ -1,5 +1,5 @@
 //var myModule = angular.module('myApp', ['myApp.filters', 'myApp.directives']);
-var myModule = angular.module('myApp', ['angular-growl']);
+var myModule = angular.module('myApp', ['angular-growl', 'ngAnimate', 'ui.bootstrap']);
 
 myModule.config(['growlProvider', function(growlProvider) {
     growlProvider.globalPosition('bottom-left');

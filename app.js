@@ -54,19 +54,26 @@ if (app.get('env') === 'development') {
 //});
 
 var yelp = require("yelp").createClient({
-    consumer_key: "xxx",
-    consumer_secret: "xxx",
-    token: "xxx",
-    token_secret: "xxx"
+    consumer_key: "p1Tm7719umX9iFlKkhujMw",
+    consumer_secret: "helHs8hWlaGdsI9PA43PU3FHlRY",
+    token: "YzBewOmbd4_vIYqOc1npMLOi_HCXP-BF",
+    token_secret: "p99_WND7cyN79Tq4KKpJLHbOv9w"
 });
 
-app.get('/yelp/:location', function(req, res, next) {
+// return list of places by city
+app.get('/yelp/city/:location', function(req, res, next) {
     yelp.search({term: "food", location: req.params.location}, function(error, data) {
         console.log(error);
-        //console.log(data);
         res.send(data);
     });
 });
 
+// return list of places by geo location coords
+app.get('/yelp/ll/:location', function(req, res, next) {
+    yelp.search({term: "food", ll: req.params.location}, function(error, data) {
+        console.log(error);
+        res.send(data);
+    });
+});
 
 module.exports = app;
