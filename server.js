@@ -34,6 +34,7 @@ io.sockets.on('connection', socket);
 server.listen(PORT, IPADDRESS);
 server.on('error', onError);
 server.on('listening', onListening);
+console.log("Listening on: " + IPADDRESS + ":" + PORT);
 
 /**
  * Normalize a port into a number, string, or false.
