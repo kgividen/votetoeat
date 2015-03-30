@@ -236,7 +236,7 @@
                         </div>
                         <div ng-repeat="business in businessData">
                             <div ng-if="currentSuggestionGroup == 'yelp'">
-                                <button class="btn btn-link" title="Add Place" ng-click="addBusiness(business)">{{business.name}}</button>
+                                <button class="btn btn-link" title="Add Place" ng-click="addBusiness(business,'yelp')">{{business.name}}</button>
                                 <a target="_blank" ng-href="{{business.url}}">
                                     <img title="Open in Yelp" ng-src="{{business.rating_img_url}}">
                                 </a>
@@ -248,7 +248,7 @@
                                 </a>
                             </div>
                             <div ng-if="currentSuggestionGroup == 'google'">
-                                <button class="btn btn-link" title="Add Place" ng-click="addBusiness(business)">{{business.name}}</button>
+                                <button class="btn btn-link" title="Add Place" ng-click="addBusiness(business,'google')">{{business.name}}</button>
                                 <a target="_blank" ng-href="http://google.com/local?q={{business.name}},{{business.vicinity}}">
                                     <img class="googleLogoSmall" title="Open in Google" alt="googleLocal" src="https://www.google.com/images/srpr/logo1w.png">
                                 </a>

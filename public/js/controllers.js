@@ -159,7 +159,7 @@ function vteController($scope, $filter, $http, socket, growl) {
         $('#input_userName').focus();
     });
 
-    $scope.addBusiness = function(business) {
+    $scope.addBusiness = function(business, type) {
         var address = "";
          var rating_img_url = "";
 
@@ -170,7 +170,7 @@ function vteController($scope, $filter, $http, socket, growl) {
             address = business.vicinity;
         }
 
-        _addPlace({
+        var added = _addPlace({
             "name" : business.name,
             "url" : business.url,
             "fromType" : type,
@@ -178,7 +178,13 @@ function vteController($scope, $filter, $http, socket, growl) {
             "rating" : business.rating,
             "rating_img_url" : rating_img_url
         });
-        growl.info("Business Added", {ttl: 1000, disableCountDown: true, referenceId:"suggestionsMessages"});
+        if(added == "added") {
+            growl.info("Business Added", {ttl: 1000, disableCountDown: true, referenceId:"suggestionsMessages"});
+        } else if (added=="duplicate") {
+            growl.error("Cannot add a duplicate place!", {ttl: 1000, disableCountDown: true, referenceId:"suggestionsMessages"});
+        } else {
+            growl.error("Error adding place!", {ttl: 1000, disableCountDown: true, referenceId:"suggestionsMessages"});
+        }
     };
 
     //TODO is there are way to angularize these modals so we don't need apply?
@@ -257,7 +263,7 @@ function vteController($scope, $filter, $http, socket, growl) {
         //check for duplicates
         if(_.findWhere($scope.places,{"name": p.name})){
             growl.error("Cannot add a duplicate place!");
-            return;
+            return "duplicate";
         }
         var place = {
             "name" : p.name,
@@ -280,6 +286,8 @@ function vteController($scope, $filter, $http, socket, growl) {
         socket.emit('send:newPlace', newPlace);
 
         growl.info("<b>" + place.name + "</b> was added as a place to eat by <b>" + $scope.userName +"</b>");
+
+        return "added";
     }
 
     function _updateVotesOnPlace(place){
