@@ -13,8 +13,10 @@ socket = require('./sockets');
  * Get port from environment and store in Express.
  */
 
-var port = normalizePort(process.env.PORT || process.env.OPENSHIFT_NODEJS_PORT || '3000');
-app.set('port', port);
+//var port = normalizePort(process.env.PORT || process.env.OPENSHIFT_NODEJS_PORT || '3000');
+var PORT = process.env.OPENSHIFT_NODEJS_PORT || 8080;
+var IPADDRESS = process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1';
+app.set('port', PORT);
 
 /**
  * Create HTTP server.
@@ -29,7 +31,7 @@ var server = http.createServer(app);
 var io = require('socket.io').listen(server);
 io.sockets.on('connection', socket);
 
-server.listen(port);
+server.listen(PORT, IPADDRESS);
 server.on('error', onError);
 server.on('listening', onListening);
 
