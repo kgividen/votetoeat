@@ -5,7 +5,7 @@
 var app = require('./app'),
     debug = require('debug')('VoteToEat:server'),
     http = require('http');
-socket = require('./sockets');
+    socket = require('./sockets');
 
 /**
  * Get port from environment and store in Express.
