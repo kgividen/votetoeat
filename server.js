@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-
 /**
  * Module dependencies.
  */
@@ -12,10 +10,9 @@ socket = require('./sockets');
 /**
  * Get port from environment and store in Express.
  */
-
 //var port = normalizePort(process.env.PORT || process.env.OPENSHIFT_NODEJS_PORT || '3000');
-var PORT = process.env.OPENSHIFT_NODEJS_PORT || 8080;
-var IPADDRESS = process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1';
+var PORT = process.env.OPENSHIFT_NODEJS_PORT || 3000;
+var IPADDRESS = process.env.OPENSHIFT_NODEJS_IP || 'localhost';
 app.set('port', PORT);
 
 /**
