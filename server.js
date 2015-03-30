@@ -12,7 +12,7 @@ var app = require('./app'),
  */
 //var port = normalizePort(process.env.PORT || process.env.OPENSHIFT_NODEJS_PORT || '3000');
 var PORT = process.env.OPENSHIFT_NODEJS_PORT || 3000;
-var IPADDRESS = process.env.OPENSHIFT_NODEJS_IP || 'localhost';
+var IPADDRESS = process.env.OPENSHIFT_NODEJS_IP || '';
 app.set('port', PORT);
 
 /**
@@ -42,9 +42,9 @@ function onError(error) {
         throw error;
     }
 
-    var bind = typeof port === 'string'
-        ? 'Pipe ' + port
-        : 'Port ' + port;
+    var bind = typeof PORT === 'string'
+        ? 'Pipe ' + PORT
+        : 'Port ' + PORT;
 
     // handle specific listen errors with friendly messages
     switch (error.code) {
