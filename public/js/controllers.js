@@ -7,9 +7,10 @@ function vteController($scope, $filter, $http, socket, growl) {
     $scope.showMainApp = false;
     $scope.groupName = "";
     $scope.voteBtnActive = 0;
-    $scope.yelpData = "";
-    $scope.googleLocalData = [];
+    $scope.businessData = [];
     $scope.location = "";
+    $scope.suggestionTitle = "Suggestions";
+    $scope.currentSuggestionGroup = "yelp";
 
     $scope.createGroup = function () {
         //todo: make sure name is unique?
@@ -88,6 +89,11 @@ function vteController($scope, $filter, $http, socket, growl) {
         socket.emit('send:vote', newPlace);
     };
 
+    $scope.setSuggestionsGroup = function(group) {
+        $scope.businessData = [];
+        $scope.currentSuggestionGroup = group;
+    };
+
     // Socket listeners
     // ================
     //These are used if other people send out data.
@@ -153,11 +159,11 @@ function vteController($scope, $filter, $http, socket, growl) {
         $('#input_userName').focus();
     });
 
-    $scope.addBusiness = function(business, type) {
+    $scope.addBusiness = function(business) {
         var address = "";
          var rating_img_url = "";
 
-        if(type=="yelp") {
+        if($scope.currentSuggestionGroup=="yelp") {
             address = business.location.display_address.toString();
             rating_img_url = business.rating_img_url;
         } else if(business.vicinity) {
@@ -172,13 +178,33 @@ function vteController($scope, $filter, $http, socket, growl) {
             "rating" : business.rating,
             "rating_img_url" : rating_img_url
         });
-        growl.info("Business Added", {ttl: 1000, disableCountDown: true, referenceId:"googleLocalSuggestionsMessages"});
+        growl.info("Business Added", {ttl: 1000, disableCountDown: true, referenceId:"suggestionsMessages"});
     };
+
+    //TODO is there are way to angularize these modals so we don't need apply?
+    $('#suggestionsModal').on('shown.bs.modal', function () {
+        if($scope.currentSuggestionGroup == "yelp") {
+            $scope.$apply(function() {
+                $scope.suggestionTitle = "Yelp Suggestions";
+            });
+        } else {
+            $scope.$apply(function() {
+                $scope.suggestionTitle = "Google Suggestions";
+            });
+            getGoogleLocalData();
+        }
+    });
+
+    $scope.showModal = function() {
+        alert("closed");
+    };
+
+
     //YELP calls
     $scope.getYelpData = function (type){
         if (type == "city"){
             $http.get("/yelp/city/" + $scope.location).success(function (doc) {
-                $scope.yelpData = doc;
+                $scope.businessData = doc;
             });
         } else {
             if (navigator.geolocation) {
@@ -187,7 +213,7 @@ function vteController($scope, $filter, $http, socket, growl) {
                         var cll = position.coords.latitude + "," + position.coords.longitude;
                         $scope.location = cll;
                         $http.get("/yelp/ll/" + cll).success(function (doc) {
-                            $scope.yelpData = doc;
+                            $scope.businessData = doc.businesses;
                         });
                     });
                 });
@@ -195,11 +221,8 @@ function vteController($scope, $filter, $http, socket, growl) {
         }
     };
 
-    //Google Local calls
-    $('#googleLocalModal').on('shown.bs.modal', function () {
-        getGoogleLocalData();
-    });
 
+    //Google Local calls
     var getGoogleLocalData = function (){
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(function (position) {
@@ -219,11 +242,11 @@ function vteController($scope, $filter, $http, socket, growl) {
 
                 service = new google.maps.places.PlacesService(map);
                 service.nearbySearch(request, function(results, status){
-                    $scope.$apply(function() {
-                        if (status == google.maps.places.PlacesServiceStatus.OK) {
-                            $scope.googleLocalData = results;
-                        }
-                    });
+                    if (status == google.maps.places.PlacesServiceStatus.OK) {
+                        $scope.$apply(function() {
+                            $scope.businessData = results;
+                        });
+                    }
                 });
             });
         }

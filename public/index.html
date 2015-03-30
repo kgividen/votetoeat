@@ -10,23 +10,23 @@
     <!--[if lt IE 9]>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.2/html5shiv.js"></script>
     <![endif]-->
-	<link rel="apple-touch-icon" sizes="57x57" href="/icons/apple-touch-icon-57x57.png">
-	<link rel="apple-touch-icon" sizes="60x60" href="/icons/apple-touch-icon-60x60.png">
-	<link rel="apple-touch-icon" sizes="72x72" href="/icons/apple-touch-icon-72x72.png">
-	<link rel="apple-touch-icon" sizes="76x76" href="/icons/apple-touch-icon-76x76.png">
-	<link rel="apple-touch-icon" sizes="114x114" href="/icons/apple-touch-icon-114x114.png">
-	<link rel="apple-touch-icon" sizes="120x120" href="/icons/apple-touch-icon-120x120.png">
-	<link rel="apple-touch-icon" sizes="144x144" href="/icons/apple-touch-icon-144x144.png">
-	<link rel="apple-touch-icon" sizes="152x152" href="/icons/apple-touch-icon-152x152.png">
-	<link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon-180x180.png">
-	<link rel="icon" type="image/png" href="/icons/favicon-32x32.png" sizes="32x32">
-	<link rel="icon" type="image/png" href="/icons/android-chrome-192x192.png" sizes="192x192">
-	<link rel="icon" type="image/png" href="/icons/favicon-96x96.png" sizes="96x96">
-	<link rel="icon" type="image/png" href="/icons/favicon-16x16.png" sizes="16x16">
-	<link rel="manifest" href="/manifest.json">
-	<meta name="msapplication-TileColor" content="#da532c">
-	<meta name="msapplication-TileImage" content="/mstile-144x144.png">
-	<meta name="theme-color" content="#ffffff">
+    <link rel="apple-touch-icon" sizes="57x57" href="/icons/apple-touch-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="/icons/apple-touch-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="/icons/apple-touch-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="/icons/apple-touch-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="/icons/apple-touch-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="/icons/apple-touch-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="/icons/apple-touch-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/icons/apple-touch-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon-180x180.png">
+    <link rel="icon" type="image/png" href="/icons/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="/icons/android-chrome-192x192.png" sizes="192x192">
+    <link rel="icon" type="image/png" href="/icons/favicon-96x96.png" sizes="96x96">
+    <link rel="icon" type="image/png" href="/icons/favicon-16x16.png" sizes="16x16">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="msapplication-TileImage" content="/mstile-144x144.png">
+    <meta name="theme-color" content="#ffffff">
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
@@ -40,72 +40,58 @@
 
 </head>
 <body ng-controller="vteController" role="document">
-
-<!--<nav class="navbar navbar-inverse navbar-fixed-top">-->
-    <!--<div class="container-fluid">-->
-        <!--&lt;!&ndash; Brand and toggle get grouped for better mobile display &ndash;&gt;-->
-        <!--<div class="navbar-header">-->
-            <!--<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">-->
-                <!--<span class="icon-bar"></span>-->
-                <!--<span class="icon-bar"></span>-->
-                <!--<span class="icon-bar"></span>-->
-            <!--</button>-->
-            <!--<a class="navbar-brand" href="#">Vote To Eat</a>-->
-        <!--</div>-->
-    <!--</div>-->
-<!--</nav>-->
 <div class="container">
-<div class="header clearfix">
-    <nav>
-        <ul class="nav nav-pills pull-right">
-            <!--<li role="presentation" class="active"><a href="#">Home</a></li>-->
-            <!--<li role="presentation"><a href="#">About</a></li>-->
-            <!--<li role="presentation"><a href="#">Contact</a></li>-->
-        </ul>
-    </nav>
-    <h3 class="text-muted">Vote To Eat</h3>
-</div>
-
-<div class="container" role="main">
-    <div class="jumbotron">
-        <h1>Vote To Eat!</h1>
-        <p>Tired of arguing about where to eat?  This site is for you.</p>
-        <div growl inline="true" reference="generalMessages"></div>
-        <p id="createGroupBox" ng-show="showGroupBox">
-            <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#createGroupModal">Create Group &raquo;</button>
-            <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#joinGroupModal">Join Group &raquo;</button>
-        </p>
+    <div class="header clearfix">
+        <nav>
+            <ul class="nav nav-pills pull-right">
+                <!--<li role="presentation" class="active"><a href="#">Home</a></li>-->
+                <!--<li role="presentation"><a href="#">About</a></li>-->
+                <!--<li role="presentation"><a href="#">Contact</a></li>-->
+            </ul>
+        </nav>
+        <h3 class="text-muted">Vote To Eat</h3>
     </div>
-</div>
-<!--<button class="btn btn-link" data-toggle="modal" data-target="#yelpSuggestionsModal">Yelp Suggestions</button>-->
-<!--<button class="btn btn-link" data-toggle="modal" data-target="#googleLocalModal">Google Local Suggestions</button>-->
-<div id="map"></div>
 
-<div id="main_app" class="container" ng-cloak ng-show="showMainApp">
-    <div class="row">
-        <div class="col-md-12">
-            <span class="pull-left">Hello {{userName}}.  Add some places you'd like to eat!</span>
+    <div class="container" role="main">
+        <div class="jumbotron">
+            <h1>Vote To Eat!</h1>
+            <p>Tired of arguing about where to eat?  This site is for you.</p>
+            <div growl inline="true" reference="generalMessages"></div>
+            <p id="createGroupBox" ng-show="showGroupBox">
+                <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#createGroupModal">Create Group &raquo;</button>
+                <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#joinGroupModal">Join Group &raquo;</button>
+            </p>
         </div>
     </div>
-    <div class="row">
-        <div class="col-md-12">
-            <h2>Places</h2>
-            <form class="form-inline">
-                <div class="form-group">
-                    <label for="input_add_place_name">Add New Place</label>
-                    <input type="text" class="form-control" id="input_add_place_name" placeholder="Place Name" ng-model="placeName">
-                </div>
-                <button type="submit" class="btn btn-primary" data-dismiss="modal" ng-click="addPlace()">Add</button>
-                <button class="btn btn-link" data-toggle="modal" data-target="#yelpSuggestionsModal">Yelp Suggestions</button>
-                <button class="btn btn-link" data-toggle="modal" data-target="#googleLocalModal">Google Suggestions</button>
-            </form>
-            <div class="col-md-12" ng-class="{true: 'well'}[places.length > 0]">
-                <div class="row" ng-repeat="place in places">
-                    <div class="row">
-                        <div class="col-md-4">
-                            <a target="_blank" ng-href="http://google.com/maps?q={{place.name}}">
-                                <h4 class="display-inline" ng-bind="place.name"></h4>
-                            </a>
+    <!--<button class="btn btn-link" data-toggle="modal" data-target="#suggestionsModal" ng-click="setSuggestionsGroup('yelp')">Yelp Suggestions</button>-->
+    <!--<button class="btn btn-link" data-toggle="modal" data-target="#suggestionsModal" ng-click="setSuggestionsGroup('google')">Google Local Suggestions</button>-->
+    <div id="map"></div>
+
+    <div id="main_app" class="container" ng-cloak ng-show="showMainApp">
+        <div class="row">
+            <div class="col-md-12">
+                <span class="pull-left">Hello {{userName}}.  Add some places you'd like to eat!</span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <h2>Places</h2>
+                <form class="form-inline">
+                    <div class="form-group">
+                        <label for="input_add_place_name">Add New Place</label>
+                        <input type="text" class="form-control" id="input_add_place_name" placeholder="Place Name" ng-model="placeName">
+                    </div>
+                    <button type="submit" class="btn btn-primary" data-dismiss="modal" ng-click="addPlace()">Add</button>
+                    <button class="btn btn-link" data-toggle="modal" data-target="#suggestionsModal" ng-click="setSuggestionsGroup('yelp')">Yelp Suggestions</button>
+                    <button class="btn btn-link" data-toggle="modal" data-target="#suggestionsModal" ng-click="setSuggestionsGroup('google')">Google Suggestions</button>
+                </form>
+                <div class="col-md-12" ng-class="{true: 'well'}[places.length > 0]">
+                    <div class="row" ng-repeat="place in places">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <a target="_blank" ng-href="http://google.com/maps?q={{place.name}}">
+                                    <h4 class="display-inline" ng-bind="place.name"></h4>
+                                </a>
                             <span ng-hide="place.fromType!='googleLocal'">
                                 <a target="_blank"  ng-href="http://google.com/local?q={{place.name}},{{place.address}}">
                                     <img class="googleLogo" alt="googleLocal" src="http://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Googlelogo.png/120px-Googlelogo.png">
@@ -118,52 +104,52 @@
                                     <img ng-src="{{place.rating_img_url}}">
                                 </a>
                             </span>
-                            <a title="{{place.address}}" target="_blank" ng-href="http://google.com/maps?q={{place.name}},{{place.address}}">
-                                <div class="indent-5"><small ng-bind="place.address"></small></div>
-                            </a>
-                        </div>
-                        <div class="col-md-8">
-                            <div class="btn-group">
-                                <button class="btn btn-default" ng-class="{'active':place.voteBtnActive == $index }" ng-click="voteForPlace(place,$index)" ng-repeat="i in getNumber(vote_max) track by $index" >
-                                {{$index}}
-                                </button>
+                                <a title="{{place.address}}" target="_blank" ng-href="http://google.com/maps?q={{place.name}},{{place.address}}">
+                                    <div class="indent-5"><small ng-bind="place.address"></small></div>
+                                </a>
                             </div>
-                            <span ng-bind="place.totalVotes"></span><span>&nbsp total</span>
+                            <div class="col-md-8">
+                                <div class="btn-group">
+                                    <button class="btn btn-default" ng-class="{'active':place.voteBtnActive == $index }" ng-click="voteForPlace(place,$index)" ng-repeat="i in getNumber(vote_max) track by $index" >
+                                        {{$index}}
+                                    </button>
+                                </div>
+                                <span ng-bind="place.totalVotes"></span><span>&nbsp total</span>
+                            </div>
+                        </div>
+                        <br/>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <h2>Members of {{groupName}}</h2>
+                <div class="col-md-12 well">
+                    <div class="row" ng-repeat="user in users">
+                        <div class="col-md-3">
+                            <span ng-bind="user.name"></span>
                         </div>
                     </div>
-                    <br/>
                 </div>
             </div>
         </div>
-    </div>
-    <div class="row">
-        <div class="col-md-12">
-            <h2>Members of {{groupName}}</h2>
-            <div class="col-md-12 well">
-                <div class="row" ng-repeat="user in users">
-                    <div class="col-md-3">
-                        <span ng-bind="user.name"></span>
-                    </div>
-                </div>
-            </div>
+        <div class="row">
+            <div class="col-md-12" growl inline="true"></div>
         </div>
     </div>
-    <div class="row">
-        <div class="col-md-12" growl inline="true"></div>
+
+
+    <div>
+        <!--Debug showing the scope -->
+        <!--<pre ng-bind="googleLocalData |json"></pre>-->
+        <hr>
+
+        <footer>
+            <p>&copy; Vote To Eat 2015</p>
+        </footer>
+
     </div>
-</div>
-
-
-<div>
-    <!--Debug showing the scope -->
-    <!--<pre ng-bind="googleLocalData |json"></pre>-->
-    <hr>
-
-    <footer>
-        <p>&copy; Vote To Eat 2015</p>
-    </footer>
-
-</div>
 </div> <!--Container-->
 
 <!--MODALS-->
@@ -225,65 +211,46 @@
     </div>
 </div>
 
-<div id="yelpSuggestionsModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="yelpSuggestionsModal" aria-hidden="true">
-    <div growl reference="yelpSuggestionsMessages"></div>
+<div id="suggestionsModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="suggestionsModal" aria-hidden="true">
+    <div growl reference="suggestionsMessages"></div>
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" >Yelp Suggestions</h4>
+                <h4 class="modal-title" ng-bind="suggestionTitle"></h4>
             </div>
             <div class="businessesList modal-body">
                 <form class="form-inline">
-                    <div class="form-group">
-                        <label for="yelp_city">Enter City</label>
-                        <input type="text" class="form-control" id="yelp_city" placeholder="City" ng-model="location">
-                    </div>
-                    <button class="btn btn-primary" title="Enter a City" ng-click="getYelpData('city')" ng-disabled="location.length==0">Yelp By City</button>
-                    <button class="btn btn-primary" title="Get Current Location" ng-click="getYelpData('cll')">
-                        <span class="glyphicon glyphicon-map-marker hand"  aria-hidden="true" ></span>
-                    </button>
-                    <div>
-                        <div ng-repeat="business in yelpData.businesses">
-                            <button class="btn btn-link" title="Add Place" ng-click="addBusiness(business,'yelp')">{{business.name}}</button>
-                            <a target="_blank" ng-href="{{business.url}}">
-                                <img title="Open in Yelp" ng-src="{{business.rating_img_url}}">
-                            </a>
-                            <a target="_blank" ng-href="{{business.url}}">
-                                <img title="Open in Yelp" alt="yelp" src="https://s3-media1.fl.yelpcdn.com/assets/2/www/img/14f29ad24935/map/miniMapLogo.png">
-                            </a>
-                            <a target="_blank" ng-href="http://google.com/maps?q={{business.name}},{{business.location.display_address}}">
-                                <small ng-repeat="address in business.location.display_address">{{address}} </small>
-                            </a>
+                    <div ng-class="form-group">
+                    <!--Show input box and location icon for yelp-->
+                        <div ng-if="currentSuggestionGroup == 'yelp'" >
+                            <label for="yelp_city">Enter City</label>
+                            <input type="text" class="form-control" id="yelp_city" placeholder="City" ng-model="location">
+                            <button class="btn btn-primary" title="Enter a City" ng-click="getYelpData('city')" ng-disabled="location.length==0">Yelp By City</button>
+                            <button class="btn btn-primary" title="Get Current Location" ng-click="getYelpData('cll')">
+                                <span class="glyphicon glyphicon-map-marker hand"  aria-hidden="true" ></span>
+                            </button>
                         </div>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="submit" class="btn btn-primary pull-right" data-dismiss="modal">Done</button>
-                <img class="pull-left" src="https://s3-media3.fl.yelpcdn.com/assets/2/www/img/65526d1a519b/developers/Powered_By_Yelp_Red.png"/>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div id="googleLocalModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="googleLocalModal" aria-hidden="true">
-    <div growl reference="googleLocalSuggestionsMessages"></div>
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" >Google Local Suggestions</h4>
-            </div>
-            <div class="businessesList modal-body">
-                <form class="form-inline">
-                    <div class="form-group">
-                        <div>
-                            <span ng-hide="googleLocalData.length>0">Loading . . .</span>
-                            <div ng-repeat="business in googleLocalData">
-                                <button class="btn btn-link" title="Add Place" ng-click="addBusiness(business,'googleLocal')">{{business.name}}</button>
+                        <div ng-if="currentSuggestionGroup == 'google'" >
+                            <span ng-hide="businessData.length > 0">Loading . . .</span>
+                        </div>
+                        <div ng-repeat="business in businessData">
+                            <div ng-if="currentSuggestionGroup == 'yelp'">
+                                <button class="btn btn-link" title="Add Place" ng-click="addBusiness(business)">{{business.name}}</button>
+                                <a target="_blank" ng-href="{{business.url}}">
+                                    <img title="Open in Yelp" ng-src="{{business.rating_img_url}}">
+                                </a>
+                                <a target="_blank" ng-href="{{business.url}}">
+                                    <img src="images/img_trans.gif" ng-class="currentSuggestionGroup == 'yelp' ? 'yelpLogoSmall' : 'googleLogoSmall'" />
+                                </a>
+                                <a target="_blank" ng-href="http://google.com/maps?q={{business.name}},{{business.location.display_address}}">
+                                    <small ng-repeat="address in business.location.display_address">{{address}} </small>
+                                </a>
+                            </div>
+                            <div ng-if="currentSuggestionGroup == 'google'">
+                                <button class="btn btn-link" title="Add Place" ng-click="addBusiness(business)">{{business.name}}</button>
                                 <a target="_blank" ng-href="http://google.com/local?q={{business.name}},{{business.vicinity}}">
-                                    <img class="googleLogo" title="Open in Google" alt="googleLocal" src="https://www.google.com/images/srpr/logo1w.png">
+                                    <img class="googleLogoSmall" title="Open in Google" alt="googleLocal" src="https://www.google.com/images/srpr/logo1w.png">
                                 </a>
                                 <a target="_blank" ng-href="http://google.com/local?q={{business.name}},{{business.vicinity}}">
                                     <rating ng-model="business.rating" readonly="true"></rating>
@@ -291,7 +258,6 @@
                                 <a target="_blank" ng-href="http://google.com/maps?q={{business.name}},{{business.vicinity}}">
                                     <small ng-bind="business.vicinity"></small>
                                 </a>
-
                             </div>
                         </div>
                     </div>
@@ -299,12 +265,11 @@
             </div>
             <div class="modal-footer">
                 <button type="submit" class="btn btn-primary pull-right" data-dismiss="modal">Done</button>
-                <img class="pull-left" src="https://maps.gstatic.com/mapfiles/api-3/images/powered-by-google-on-white2.png"/>
+                <img src="images/img_trans.gif" class="pull-left" ng-class="currentSuggestionGroup == 'yelp' ? 'yelpPoweredBy' : 'googlePoweredBy'" />
             </div>
         </div>
     </div>
 </div>
-
 <!-- JavaScript Files================================================== -->
 <!-- Placed at the end of the document so the pages load faster -->
 <script src="https://codeorigin.jquery.com/jquery-1.10.2.min.js"></script>
@@ -312,8 +277,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.12.1/ui-bootstrap-tpls.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.6.0/underscore-min.js"></script>
 <script type='text/javascript' src='/socket.io/socket.io.js'></script>
-<!--<script src='https://cdn.socket.io/socket.io-1.3.5.js'></script>-->
-<!--<script src='http://www.votetoeat.com/socket.io/socket.io.js'></script>-->
 <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?libraries=places"></script>
 
 <script type="text/javascript" src='js/vte_util.js'></script>
