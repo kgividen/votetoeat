@@ -13,7 +13,7 @@ socket = require('./sockets');
  * Get port from environment and store in Express.
  */
 
-var port = normalizePort(process.env.PORT || '3000');
+var port = normalizePort(process.env.PORT || process.env.OPENSHIFT_NODEJS_PORT || '3000');
 app.set('port', port);
 
 /**
