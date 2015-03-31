@@ -24,7 +24,6 @@ function vteController($scope, $filter, $http, socket, growl) {
 
             } else {
                 $scope.showSetUserName = true;
-                $('#inputUserName').focus();
             }
         });
     };
@@ -32,7 +31,6 @@ function vteController($scope, $filter, $http, socket, growl) {
     $scope.joinGroup = function () {
         //We emit after entering the name so that's in $scope.addUser
         $scope.showSetUserName = true;
-        $('#inputUserName').focus();
     };
 
     $scope.addUser = function() {

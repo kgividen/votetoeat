@@ -175,7 +175,7 @@
                     <form  class="form-inline">
                         <div class="form-group">
                             <label for="inputUserName">Your Name</label>
-                            <input type="text" class="form-control" id="inputUserName" placeholder="User Name" ng-model="userName">
+                            <input type="text" class="form-control" id="inputUserName" focus-on="showSetUserName" placeholder="User Name" ng-model="userName" >
                         </div>
                         <button type="submit" class="btn btn-primary" data-dismiss="modal" ng-click="addUser()">Save</button>
                     </form>
@@ -254,6 +254,7 @@
 <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?libraries=places"></script>
 
 <script type="text/javascript" src='js/vte_util.js'></script>
+<script type="text/javascript" src='js/directives.js'></script>
 <script type="text/javascript" src='js/services.js'></script>
 <script type="text/javascript" src='js/controllers.js'></script>
 
