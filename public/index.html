@@ -64,7 +64,8 @@
         </div>
     </div>
     <!--<button class="btn btn-link" data-toggle="modal" data-target="#suggestionsModal" ng-click="setSuggestionsGroup('yelp')">Yelp Suggestions</button>-->
-    <!--<button class="btn btn-link" data-toggle="modal" data-target="#suggestionsModal" ng-click="setSuggestionsGroup('google')">Google Local Suggestions</button>-->
+    <!--<button class="btn btn-link" data-toggle="modal" data-target="#suggestionsModal" ng-click="setSuggestionsGroup('google')">Google Suggestions</button>-->
+    <!--<button class="btn btn-link" data-toggle="modal" data-target="#suggestionsModal" ng-click="setSuggestionsGroup('groupon')">Groupon Suggestions</button>-->
     <div id="map"></div>
 
     <div id="main_app" class="container" ng-cloak ng-show="showMainApp">
@@ -81,9 +82,10 @@
                         <label for="input_add_place_name">Add New Place</label>
                         <input type="text" class="form-control" id="input_add_place_name" placeholder="Place Name" ng-model="placeName">
                     </div>
-                    <button type="submit" class="btn btn-primary" data-dismiss="modal" ng-click="addPlace()">Add</button>
+                    <button type="submit" title="Add Place" class="btn btn-primary" data-dismiss="modal" ng-click="addPlace()">Add</button>
                     <button class="btn btn-link" data-toggle="modal" data-target="#suggestionsModal" ng-click="setSuggestionsGroup('yelp')">Yelp Suggestions</button>
                     <button class="btn btn-link" data-toggle="modal" data-target="#suggestionsModal" ng-click="setSuggestionsGroup('google')">Google Suggestions</button>
+                    <!--<button class="btn btn-link" data-toggle="modal" data-target="#suggestionsModal" ng-click="setSuggestionsGroup('groupon')">Groupon Suggestions</button>-->
                 </form>
                 <div class="col-md-12" ng-class="{true: 'well'}[places.length > 0]">
                     <div class="row" ng-repeat="place in places">
@@ -145,7 +147,7 @@
 
     <div>
         <!--Debug showing the scope -->
-        <!--<pre ng-bind="googleLocalData |json"></pre>-->
+        <!--<pre ng-bind="businessData |json"></pre>-->
         <hr>
 
         <footer>
@@ -199,20 +201,25 @@
             <div class="businessesList modal-body">
                 <form class="form-inline">
                     <div ng-class="form-group">
-                    <!--Show input box and location icon for yelp-->
-                        <div ng-if="currentSuggestionGroup == 'yelp'" >
+                    <!--Show input box and location icon for yelp.  Needs to be ng-show because ng-if destroys scope on the ng-models-->
+                        <div ng-show="currentSuggestionGroup == 'yelp'" >
                             <label for="yelp_city">Enter City</label>
                             <input type="text" class="form-control" id="yelp_city" placeholder="City" ng-model="location">
                             <button class="btn btn-primary" title="Enter a City" ng-click="getYelpData('city')" ng-disabled="location.length==0">Yelp By City</button>
                             <button class="btn btn-primary" title="Get Current Location" ng-click="getYelpData('cll')">
                                 <span class="glyphicon glyphicon-map-marker hand"  aria-hidden="true" ></span>
                             </button>
+                            <div class="checkbox">
+                                <label>
+                                    <input ng-model="dealsOnly" type="checkbox"> Show only deals
+                                </label>
+                            </div>
                         </div>
-                        <div ng-if="currentSuggestionGroup == 'google'" >
+                        <div ng-show="currentSuggestionGroup == 'google'" >
                             <span ng-hide="businessData.length > 0">Loading . . .</span>
                         </div>
                         <div ng-repeat="business in businessData">
-                            <div ng-if="currentSuggestionGroup == 'yelp'">
+                            <div ng-show="currentSuggestionGroup == 'yelp'">
                                 <button class="btn btn-link" title="Add Place" ng-click="addBusiness(business,'yelp')">{{business.name}}</button>
                                 <a target="_blank" ng-href="{{business.url}}">
                                     <img title="Open in Yelp" ng-src="{{business.rating_img_url}}">
@@ -220,11 +227,14 @@
                                 <a target="_blank" ng-href="{{business.url}}">
                                     <img src="images/img_trans.gif" ng-class="currentSuggestionGroup == 'yelp' ? 'yelpLogoSmall' : 'googleLogoSmall'" />
                                 </a>
+                                <a class="link hand" target="_blank" title="{{business.deals[0].what_you_get}}" ng-show="business.deals.length > 0" ng-href="{{business.deals[0].url}}">
+                                    <span class="glyphicon glyphicon-check" aria-hidden="true" ></span>
+                                </a>
                                 <a target="_blank" ng-href="http://google.com/maps?q={{business.name}},{{business.location.display_address}}">
                                     <small ng-repeat="address in business.location.display_address">{{address}} </small>
                                 </a>
                             </div>
-                            <div ng-if="currentSuggestionGroup == 'google'">
+                            <div ng-show="currentSuggestionGroup == 'google'">
                                 <button class="btn btn-link" title="Add Place" ng-click="addBusiness(business,'google')">{{business.name}}</button>
                                 <a target="_blank" ng-href="http://google.com/local?q={{business.name}},{{business.vicinity}}">
                                     <img src="images/img_trans.gif" class="googleLogoSmall" title="Open in Google" alt="google">
@@ -236,6 +246,18 @@
                                     <small ng-bind="business.vicinity"></small>
                                 </a>
                             </div>
+                            <!--<div ng-show="currentSuggestionGroup == 'groupon'">-->
+                                <!--<button class="btn btn-link" title="Add Place" ng-click="addBusiness(business,'groupon')">{{business.name}}</button>-->
+                                <!--<a target="_blank" ng-href="http://google.com/local?q={{business.name}},{{business.vicinity}}">-->
+                                    <!--<img src="images/img_trans.gif" class="googleLogoSmall" title="Open in Google" alt="google">-->
+                                <!--</a>-->
+                                <!--<a target="_blank" ng-href="http://google.com/local?q={{business.name}},{{business.vicinity}}">-->
+                                    <!--<rating ng-model="business.rating" readonly="true"></rating>-->
+                                <!--</a>-->
+                                <!--<a target="_blank" ng-href="http://google.com/maps?q={{business.name}},{{business.vicinity}}">-->
+                                    <!--<small ng-bind="business.vicinity"></small>-->
+                                <!--</a>-->
+                            <!--</div>-->
                         </div>
                     </div>
                 </form>

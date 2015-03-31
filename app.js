@@ -57,7 +57,7 @@ var yelp = require("yelp").createClient({
 
 // return list of places by city
 app.get('/yelp/city/:location', function(req, res, next) {
-    yelp.search({term: "food", location: req.params.location}, function(error, data) {
+    yelp.search({term: "food", location: req.params.location, deals_filter:req.query.deals, sort:1}, function(error, data) {
         console.log(error);
         res.send(data);
     });
@@ -65,7 +65,7 @@ app.get('/yelp/city/:location', function(req, res, next) {
 
 // return list of places by geo location coords
 app.get('/yelp/ll/:location', function(req, res, next) {
-    yelp.search({term: "food", ll: req.params.location}, function(error, data) {
+    yelp.search({term: "food", ll: req.params.location, deals_filter:req.query.deals, sort:1}, function(error, data) {
         console.log(error);
         res.send(data);
     });

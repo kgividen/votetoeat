@@ -13,6 +13,7 @@ function vteController($scope, $filter, $http, socket, growl) {
     $scope.currentSuggestionGroup = "yelp";
     $scope.showSetUserName = false;
     $scope.joinOrCreateBtn = "create";
+    $scope.dealsOnly = false;
 
     $scope.createGroup = function () {
         //Get groups and check for duplicate
@@ -198,9 +199,10 @@ function vteController($scope, $filter, $http, socket, growl) {
 
     //YELP calls
     $scope.getYelpData = function (type){
+        $scope.businessData = "";
         if (type == "city"){
-            $http.get("/yelp/city/" + $scope.location).success(function (doc) {
-                $scope.businessData = doc;
+            $http.get("/yelp/city/" + $scope.location + "?deals= " + $scope.dealsOnly).success(function (doc) {
+                $scope.businessData = doc.businesses;
             });
         } else {
             if (navigator.geolocation) {
@@ -208,7 +210,7 @@ function vteController($scope, $filter, $http, socket, growl) {
                     $scope.$apply(function() {
                         var cll = position.coords.latitude + "," + position.coords.longitude;
                         $scope.location = cll;
-                        $http.get("/yelp/ll/" + cll).success(function (doc) {
+                        $http.get("/yelp/ll/" + cll + "?deals= " + $scope.dealsOnly).success(function (doc) {
                             $scope.businessData = doc.businesses;
                         });
                     });
