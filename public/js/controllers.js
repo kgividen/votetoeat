@@ -314,6 +314,16 @@ function vteController($scope, $filter, $http, socket, growl) {
         if(place.vote) {
             growl.info(currentPlace.name + " received " + place.vote + " votes by " + place.voter + "!");
         }
+        //remove all the winnings
+        $scope.places = _.map($scope.places, function(o) {
+            return _.omit(o, 'winning');
+        });
+
+        //update the color for the winning place
+        var winningPlace = _.max($scope.places, function(place){
+            return place.totalVotes;
+        });
+        winningPlace.winning = true;
 
     }
 

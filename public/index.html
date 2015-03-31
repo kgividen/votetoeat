@@ -114,7 +114,10 @@
                                         {{$index}}
                                     </button>
                                 </div>
-                                <span ng-bind="place.totalVotes"></span><span>&nbsp total</span>
+                                <span>
+                                    <span ng-bind="place.totalVotes"></span><span>&nbsp total</span>
+                                    <span ng-show="place.winning" class="winning glyphicon glyphicon-ok" aria-hidden="true" ></span>
+                                </span>
                             </div>
                         </div>
                         <br/>
