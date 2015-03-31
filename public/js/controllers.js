@@ -11,12 +11,10 @@ function vteController($scope, $filter, $http, socket, growl) {
     $scope.location = "";
     $scope.suggestionTitle = "Suggestions";
     $scope.currentSuggestionGroup = "yelp";
+    $scope.showSetUserName = false;
+    $scope.joinOrCreateBtn = "create";
 
     $scope.createGroup = function () {
-        //todo: make sure name is unique?
-        //var group_guid = vte_util.createGuid();
-        //$scope.group_guid = group_guid;
-
         //Get groups and check for duplicate
         socket.emit('check_group_name', {
             group: $scope.groupName
@@ -25,14 +23,16 @@ function vteController($scope, $filter, $http, socket, growl) {
                 growl.error("Duplicate name please try again.", {ttl: 2000, disableCountDown: true, referenceId:"generalMessages"});
 
             } else {
-                $("#enterNameModal").modal('show');
+                $scope.showSetUserName = true;
+                $('#inputUserName').focus();
             }
         });
     };
 
     $scope.joinGroup = function () {
         //We emit after entering the name so that's in $scope.addUser
-        $("#enterNameModal").modal('show');
+        $scope.showSetUserName = true;
+        $('#inputUserName').focus();
     };
 
     $scope.addUser = function() {
@@ -147,16 +147,8 @@ function vteController($scope, $filter, $http, socket, growl) {
 
 
     //set default focuses
-    $('#createGroupModal').on('shown.bs.modal', function () {
-        $('#input_group_name').focus();
-    });
-
-    $('#joinGroupModal').on('shown.bs.modal', function () {
-        $('#join_group_name').focus();
-    });
-
-    $('#enterNameModal').on('shown.bs.modal', function () {
-        $('#input_userName').focus();
+    $('#groupModal').on('shown.bs.modal', function () {
+        $('#inputGroupName').focus();
     });
 
     $scope.addBusiness = function(business, type) {
