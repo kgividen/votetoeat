@@ -1,7 +1,5 @@
 input[type="text"]{margin-bottom: 0px}
 
-/*#messages{margin-top: 20px}*/
-
 body {
     padding-bottom: 30px;
 }
@@ -19,7 +17,6 @@ body {
 }
 
 .googleLogoSmall {
-    /*background-image: url("https://www.google.com/images/srpr/logo1w.png");*/
     background-image: url("http://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Googlelogo.png/120px-Googlelogo.png");
     background-size: 44px 15px;
     background-repeat: no-repeat;

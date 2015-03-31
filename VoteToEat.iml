@@ -6,11 +6,11 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="titanium-mobile-3.2.2" level="application" />
-    <orderEntry type="library" name="VoteToEat node_modules" level="project" />
     <orderEntry type="library" name="angular" level="application" />
     <orderEntry type="library" name="angular-animate" level="application" />
     <orderEntry type="library" name="jquery-1.10.2" level="application" />
     <orderEntry type="library" name="underscore" level="application" />
     <orderEntry type="library" name="ui-bootstrap" level="application" />
+    <orderEntry type="library" name="ui-bootstrap-tpls" level="application" />
   </component>
 </module>
