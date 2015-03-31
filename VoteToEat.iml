@@ -12,5 +12,6 @@
     <orderEntry type="library" name="underscore" level="application" />
     <orderEntry type="library" name="ui-bootstrap" level="application" />
     <orderEntry type="library" name="ui-bootstrap-tpls" level="application" />
+    <orderEntry type="library" name="VoteToEat node_modules" level="project" />
   </component>
 </module>
