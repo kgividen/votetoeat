@@ -92,15 +92,15 @@
                                 <a target="_blank" ng-href="http://google.com/maps?q={{place.name}}">
                                     <h4 class="display-inline" ng-bind="place.name"></h4>
                                 </a>
-                            <span ng-hide="place.fromType!='google'">
+                            <span ng-show="place.fromType == 'google'">
                                 <a target="_blank"  ng-href="http://google.com/local?q={{place.name}},{{place.address}}">
-                                    <img class="googleLogoSmall" alt="google" src="http://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Googlelogo.png/120px-Googlelogo.png">
+                                    <img src="images/img_trans.gif" class="googleLogoSmall" alt="google">
                                     <rating ng-model="place.rating" readonly="true"></rating>
                                 </a>
                             </span>
-                            <span ng-hide="place.fromType!='yelp'">
+                            <span ng-show="place.fromType == 'yelp'">
                                 <a target="_blank" ng-href="{{place.url}}">
-                                    <img alt="yelp" src="https://s3-media1.fl.yelpcdn.com/assets/2/www/img/14f29ad24935/map/miniMapLogo.png">
+                                    <img src="images/img_trans.gif" class="yelpLogoSmall" alt="yelp">
                                     <img ng-src="{{place.rating_img_url}}">
                                 </a>
                             </span>
@@ -250,7 +250,7 @@
                             <div ng-if="currentSuggestionGroup == 'google'">
                                 <button class="btn btn-link" title="Add Place" ng-click="addBusiness(business,'google')">{{business.name}}</button>
                                 <a target="_blank" ng-href="http://google.com/local?q={{business.name}},{{business.vicinity}}">
-                                    <img class="googleLogoSmall" title="Open in Google" alt="google" src="https://www.google.com/images/srpr/logo1w.png">
+                                    <img src="images/img_trans.gif" class="googleLogoSmall" title="Open in Google" alt="google">
                                 </a>
                                 <a target="_blank" ng-href="http://google.com/local?q={{business.name}},{{business.vicinity}}">
                                     <rating ng-model="business.rating" readonly="true"></rating>
