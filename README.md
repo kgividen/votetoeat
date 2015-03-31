@@ -11,7 +11,8 @@ http://www.votetoeat.com
 * Users vote on places
 * Full transparency of who voted for what
 * Yelp recommendations
+* Google recommendations
 
 ## Interesting
-This is currently being hosted on node.ACS from http://www.appcelerator.com/
+This is currently being hosted on openshift.
 
