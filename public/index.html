@@ -92,9 +92,9 @@
                                 <a target="_blank" ng-href="http://google.com/maps?q={{place.name}}">
                                     <h4 class="display-inline" ng-bind="place.name"></h4>
                                 </a>
-                            <span ng-hide="place.fromType!='googleLocal'">
+                            <span ng-hide="place.fromType!='google'">
                                 <a target="_blank"  ng-href="http://google.com/local?q={{place.name}},{{place.address}}">
-                                    <img class="googleLogo" alt="googleLocal" src="http://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Googlelogo.png/120px-Googlelogo.png">
+                                    <img class="googleLogoSmall" alt="google" src="http://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Googlelogo.png/120px-Googlelogo.png">
                                     <rating ng-model="place.rating" readonly="true"></rating>
                                 </a>
                             </span>
@@ -250,7 +250,7 @@
                             <div ng-if="currentSuggestionGroup == 'google'">
                                 <button class="btn btn-link" title="Add Place" ng-click="addBusiness(business,'google')">{{business.name}}</button>
                                 <a target="_blank" ng-href="http://google.com/local?q={{business.name}},{{business.vicinity}}">
-                                    <img class="googleLogoSmall" title="Open in Google" alt="googleLocal" src="https://www.google.com/images/srpr/logo1w.png">
+                                    <img class="googleLogoSmall" title="Open in Google" alt="google" src="https://www.google.com/images/srpr/logo1w.png">
                                 </a>
                                 <a target="_blank" ng-href="http://google.com/local?q={{business.name}},{{business.vicinity}}">
                                     <rating ng-model="business.rating" readonly="true"></rating>
