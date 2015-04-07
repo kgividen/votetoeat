@@ -45,12 +45,10 @@ body {
     height: 25px;
 }
 
-.header {
-    padding-bottom: 20px;
-    border-bottom: 1px solid #e5e5e5;
-    margin-bottom: 30px;
-}
-
 .winning {
     color: green;
+}
+
+.btn-width {
+    width: 50px;
 }

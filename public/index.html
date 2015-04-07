@@ -41,18 +41,19 @@
 </head>
 <body ng-controller="vteController" role="document">
 <div class="container">
-    <div class="header clearfix">
+    <div class="clearfix">
         <nav>
-            <ul class="nav nav-pills pull-right">
-                <!--<li role="presentation" class="active"><a href="#">Home</a></li>-->
+            <ul class="nav nav-pills pull-right" ng-cloak ng-show="showMainApp">
+                <li role="presentation"><a href="./index.html" ng-click="logout()">Logout</a></li>
                 <!--<li role="presentation"><a href="#">About</a></li>-->
                 <!--<li role="presentation"><a href="#">Contact</a></li>-->
             </ul>
         </nav>
         <h3 class="text-muted">Vote To Eat</h3>
+        <hr/>
     </div>
 
-    <div class="container" role="main">
+    <div class="container" role="main" ng-hide="showMainApp">
         <div class="jumbotron">
             <h1>Vote To Eat!</h1>
             <p>Tired of arguing about where to eat?  This site is for you.</p>
@@ -70,9 +71,10 @@
 
     <div id="main_app" class="container" ng-cloak ng-show="showMainApp">
         <div class="row">
-            <div class="col-md-12">
-                <span class="pull-left">Hello {{userName}}.  Add some places you'd like to eat!</span>
-            </div>
+            <h1 class="pull-left">Hello {{userName}}.</h1>
+        </div>
+        <div class="row">
+            <h4 class="lead">Add some places you'd like to eat.  Give each place a score based on how much you'd like to eat there.  The highest score wins!</h4>
         </div>
         <div class="row">
             <div class="col-md-12">
@@ -105,6 +107,9 @@
                                     <img src="images/img_trans.gif" class="yelpLogoSmall" alt="yelp">
                                     <img ng-src="{{place.rating_img_url}}">
                                 </a>
+                                <a class="link hand" target="_blank" title="{{place.deal.what_you_get}}" ng-show="place.deal!=null" ng-href="{{place.deal.url}}">
+                                    <span class="glyphicon glyphicon-check" aria-hidden="true" ></span>
+                                </a>
                             </span>
                                 <a title="{{place.address}}" target="_blank" ng-href="http://google.com/maps?q={{place.name}},{{place.address}}">
                                     <div class="indent-5"><small ng-bind="place.address"></small></div>
@@ -118,7 +123,7 @@
                                 </div>
                                 <span>
                                     <span ng-bind="place.totalVotes"></span><span>&nbsp total</span>
-                                    <span ng-show="place.winning" class="winning glyphicon glyphicon-ok" aria-hidden="true" ></span>
+                                    <span ng-show="place.winning" title="Winning!" class="winning glyphicon glyphicon-ok" aria-hidden="true" ></span>
                                 </span>
                             </div>
                         </div>
@@ -227,7 +232,7 @@
                                 <a target="_blank" ng-href="{{business.url}}">
                                     <img src="images/img_trans.gif" ng-class="currentSuggestionGroup == 'yelp' ? 'yelpLogoSmall' : 'googleLogoSmall'" />
                                 </a>
-                                <a class="link hand" target="_blank" title="{{business.deals[0].what_you_get}}" ng-show="business.deals.length > 0" ng-href="{{business.deals[0].url}}">
+                                <a class="hand" target="_blank" title="{{business.deals[0].what_you_get}}" ng-show="business.deals.length > 0" ng-href="{{business.deals[0].url}}">
                                     <span class="glyphicon glyphicon-check" aria-hidden="true" ></span>
                                 </a>
                                 <a target="_blank" ng-href="http://google.com/maps?q={{business.name}},{{business.location.display_address}}">

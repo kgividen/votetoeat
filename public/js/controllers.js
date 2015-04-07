@@ -93,6 +93,11 @@ function vteController($scope, $filter, $http, socket, growl) {
         $scope.currentSuggestionGroup = group;
     };
 
+
+    $scope.logout = function() {
+        socket.emit('disconnect', $scope.userName);
+    };
+
     // Socket listeners
     // ================
     //These are used if other people send out data.
@@ -167,7 +172,8 @@ function vteController($scope, $filter, $http, socket, growl) {
             "fromType" : type,
             "address" : address,
             "rating" : business.rating,
-            "rating_img_url" : rating_img_url
+            "rating_img_url" : rating_img_url,
+            "deal" : business.deals[0]
         });
         if(added == "added") {
             growl.info("Business Added", {ttl: 1000, disableCountDown: true, referenceId:"suggestionsMessages"});
@@ -264,6 +270,7 @@ function vteController($scope, $filter, $http, socket, growl) {
             "fromType": p.fromType,
             "rating" : p.rating,
             "rating_img_url" : p.rating_img_url,
+            "deal" : p.deal,
             "voters" : []
         };
 
