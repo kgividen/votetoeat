@@ -166,15 +166,22 @@ function vteController($scope, $filter, $http, socket, growl) {
             address = business.vicinity;
         }
 
-        var added = _addPlace({
+        var placeToAdd = {
             "name" : business.name,
             "url" : business.url,
             "fromType" : type,
             "address" : address,
             "rating" : business.rating,
-            "rating_img_url" : rating_img_url,
-            "deal" : business.deals[0]
-        });
+            "rating_img_url" : rating_img_url
+        };
+
+        //If theres a deal lets add it.
+        if(business.deals){
+            placeToAdd.deal = business.deals[0];
+        }
+
+        var added = _addPlace(placeToAdd);
+
         if(added == "added") {
             growl.info("Business Added", {ttl: 1000, disableCountDown: true, referenceId:"suggestionsMessages"});
         } else if (added=="duplicate") {

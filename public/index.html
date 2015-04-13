@@ -42,7 +42,7 @@
 <body ng-controller="vteController" role="document">
 <div class="container">
     <div class="clearfix">
-        <nav>
+        <nav >
             <ul class="nav nav-pills pull-right" ng-cloak ng-show="showMainApp">
                 <li role="presentation"><a href="./index.html" ng-click="logout()">Logout</a></li>
                 <!--<li role="presentation"><a href="#">About</a></li>-->
@@ -226,6 +226,7 @@
                         <div ng-repeat="business in businessData">
                             <div ng-show="currentSuggestionGroup == 'yelp'">
                                 <button class="btn btn-link" title="Add Place" ng-click="addBusiness(business,'yelp')">{{business.name}}</button>
+                                <pre ng-bind="business |json"></pre>
                                 <a target="_blank" ng-href="{{business.url}}">
                                     <img title="Open in Yelp" ng-src="{{business.rating_img_url}}">
                                 </a>
