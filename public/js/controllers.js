@@ -14,6 +14,11 @@ function vteController($scope, $filter, $http, socket, growl) {
     $scope.showSetUserName = false;
     $scope.joinOrCreateBtn = "create";
     $scope.dealsOnly = false;
+    $scope.yelpOffset = 0;
+    $scope.yelpSearchType = "cll";
+    $scope.showLoading = true;
+    $scope.sortType = 0;
+    $scope.searchType = "";
 
     $scope.createGroup = function () {
         //Get groups and check for duplicate
@@ -197,6 +202,7 @@ function vteController($scope, $filter, $http, socket, growl) {
             $scope.$apply(function() {
                 $scope.suggestionTitle = "Yelp Suggestions";
             });
+            $scope.getYelpData($scope.searchType, $scope.sortType);
         } else {
             $scope.$apply(function() {
                 $scope.suggestionTitle = "Google Suggestions";
@@ -209,22 +215,39 @@ function vteController($scope, $filter, $http, socket, growl) {
         alert("closed");
     };
 
-
     //YELP calls
-    $scope.getYelpData = function (type){
-        $scope.businessData = "";
-        if (type == "city"){
-            $http.get("/yelp/city/" + $scope.location + "?deals= " + $scope.dealsOnly).success(function (doc) {
+    $scope.getMoreYelpData = function() {
+        $scope.yelpOffset = $scope.yelpOffset + 20;
+        $scope.getYelpData($scope.searchType, $scope.sortType);
+    };
+
+    $scope.updateYelpSortData = function (s){
+        $scope.businessData = [];
+        $scope.yelpOffset = 0;
+        $scope.getYelpData($scope.searchType, s);
+    };
+
+
+    $scope.getYelpData = function(searchType, sortType){
+        $scope.searchType = searchType;
+        if(sortType != null) {
+            $scope.sortType = sortType;
+        }
+        $scope.showLoading = true;
+        if ($scope.searchType  == "city" || $scope.yelpSearchType == 'city'){
+            $http.get("/yelp/city/" + $scope.location + "?deals= " + $scope.dealsOnly + "&offset=" + $scope.yelpOffset + "&sortType=" + $scope.sortType).success(function (doc) {
                 $scope.businessData = doc.businesses;
+                $scope.showLoading = false;
             });
         } else {
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(function (position) {
                     $scope.$apply(function() {
                         var cll = position.coords.latitude + "," + position.coords.longitude;
-                        $scope.location = cll;
-                        $http.get("/yelp/ll/" + cll + "?deals= " + $scope.dealsOnly).success(function (doc) {
-                            $scope.businessData = doc.businesses;
+                        //$scope.location = cll;
+                        $http.get("/yelp/ll/" + cll + "?deals=" + $scope.dealsOnly + "&offset=" + $scope.yelpOffset + "&sortType=" + $scope.sortType).success(function (doc) {
+                            $scope.businessData.push.apply($scope.businessData, doc.businesses);
+                            $scope.showLoading = false;
                         });
                     });
                 });

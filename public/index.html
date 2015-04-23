@@ -64,9 +64,8 @@
             </p>
         </div>
     </div>
-    <!--<button class="btn btn-link" data-toggle="modal" data-target="#suggestionsModal" ng-click="setSuggestionsGroup('yelp')">Yelp Suggestions</button>-->
+    <button class="btn btn-link" data-toggle="modal" data-target="#suggestionsModal" ng-click="setSuggestionsGroup('yelp')">Yelp Suggestions</button>
     <!--<button class="btn btn-link" data-toggle="modal" data-target="#suggestionsModal" ng-click="setSuggestionsGroup('google')">Google Suggestions</button>-->
-    <!--<button class="btn btn-link" data-toggle="modal" data-target="#suggestionsModal" ng-click="setSuggestionsGroup('groupon')">Groupon Suggestions</button>-->
     <div id="map"></div>
 
     <div id="main_app" class="container" ng-cloak ng-show="showMainApp">
@@ -210,18 +209,20 @@
                         <div ng-show="currentSuggestionGroup == 'yelp'" >
                             <label for="yelp_city">Enter City</label>
                             <input type="text" class="form-control" id="yelp_city" placeholder="City" ng-model="location">
-                            <button class="btn btn-primary" title="Enter a City" ng-click="getYelpData('city')" ng-disabled="location.length==0">Yelp By City</button>
-                            <button class="btn btn-primary" title="Get Current Location" ng-click="getYelpData('cll')">
+                            <button class="btn btn-primary" title="Enter a City" ng-click="getYelpData('city', sortType);" ng-disabled="location.length==0">Yelp By City</button>
+                            <button class="btn btn-primary" title="Get Current Location" ng-click="getYelpData('cll', sortType)">
                                 <span class="glyphicon glyphicon-map-marker hand"  aria-hidden="true" ></span>
                             </button>
-                            <div class="checkbox">
-                                <label>
-                                    <input ng-model="dealsOnly" type="checkbox"> Search only deals
-                                </label>
+                            <br/><br/>
+                            <label>Sort Again By:</label>
+                            <div class="btn-group" role="group">
+                                <button type="button" class="btn btn-default" ng-class="{active:sortType === 0}" ng-click="updateYelpSortData(0)">Best Match</button>
+                                <button type="button" class="btn btn-default" ng-class="{active:sortType === 1}" ng-click="updateYelpSortData(1)">Location</button>
+                                <button type="button" class="btn btn-default" title="The rating sort is not strictly sorted by the rating value, but by an adjusted rating value that takes into account the number of ratings, similar to a bayesian average. This is so a business with 1 rating of 5 stars doesn’t immediately jump to the top."
+                                        ng-class="{active:sortType === 2}" ng-click="updateYelpSortData(2)">Rating</button>
                             </div>
-                        </div>
-                        <div ng-show="currentSuggestionGroup == 'google'" >
-                            <span ng-hide="businessData.length > 0">Loading . . .</span>
+                            <button class="btn btn-default" ng-class="{active:dealsOnly === true}" ng-click="updateYelpSortData();dealsOnly=!dealsOnly">Deals Only</button>
+                            <!--<button class="btn btn-primary" title="Get Current Location" ng-click="updateYelpSortData();businessData=[];yelpOffset=0">Update Search</button>-->
                         </div>
                         <div ng-repeat="business in businessData">
                             <div ng-show="currentSuggestionGroup == 'yelp'">
@@ -251,19 +252,15 @@
                                     <small ng-bind="business.vicinity"></small>
                                 </a>
                             </div>
-                            <!--<div ng-show="currentSuggestionGroup == 'groupon'">-->
-                                <!--<button class="btn btn-link" title="Add Place" ng-click="addBusiness(business,'groupon')">{{business.name}}</button>-->
-                                <!--<a target="_blank" ng-href="http://google.com/local?q={{business.name}},{{business.vicinity}}">-->
-                                    <!--<img src="images/img_trans.gif" class="googleLogoSmall" title="Open in Google" alt="google">-->
-                                <!--</a>-->
-                                <!--<a target="_blank" ng-href="http://google.com/local?q={{business.name}},{{business.vicinity}}">-->
-                                    <!--<rating ng-model="business.rating" readonly="true"></rating>-->
-                                <!--</a>-->
-                                <!--<a target="_blank" ng-href="http://google.com/maps?q={{business.name}},{{business.vicinity}}">-->
-                                    <!--<small ng-bind="business.vicinity"></small>-->
-                                <!--</a>-->
-                            <!--</div>-->
                         </div>
+                        <div>
+                            <!--<span ng-show="businessData.length === 0 || showLoading===true">Loading . . .</span>-->
+                            <span ng-show="showLoading===true">Loading . . .</span>
+                        </div>
+                        <button class="btn btn-primary pull-right"
+                                title="Yelp will only allow up to 40 businesses when searching by location.  Search by 'best' match for more than 40"
+                                ng-disabled="businessData.length >= 40" ng-hide="businessData.length === 0 || sortType == 0" ng-click="getMoreYelpData()">Next 20</button>
+                        <button class="btn btn-primary pull-right" ng-show="businessData.length > 0 && sortType === 0" ng-click="getMoreYelpData()">Next 20</button>
                     </div>
                 </form>
             </div>
