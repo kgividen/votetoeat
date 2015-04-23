@@ -218,18 +218,28 @@ function vteController($scope, $filter, $http, socket, growl) {
     //YELP calls
     $scope.getMoreYelpData = function() {
         $scope.yelpOffset = $scope.yelpOffset + 20;
-        $scope.getYelpData($scope.searchType, $scope.sortType);
+        _getYelpData($scope.sortType);
     };
 
     $scope.updateYelpSortData = function (s){
         $scope.businessData = [];
         $scope.yelpOffset = 0;
-        $scope.getYelpData($scope.searchType, s);
+        _getYelpData(s);
     };
 
 
-    $scope.getYelpData = function(searchType, sortType){
+    $scope.getYelpData = function(searchType) {
         $scope.searchType = searchType;
+        _getYelpData($scope.sortType);
+    };
+
+    $scope.updateYelpSortDataWithDeals = function() {
+        $scope.businessData = [];
+        $scope.dealsOnly=!$scope.dealsOnly;
+        _getYelpData();
+    };
+
+    function _getYelpData(sortType){
         if(sortType != null) {
             $scope.sortType = sortType;
         }
@@ -253,7 +263,7 @@ function vteController($scope, $filter, $http, socket, growl) {
                 });
             }
         }
-    };
+    }
 
 
     //Google Local calls
