@@ -16,9 +16,10 @@ function vteController($scope, $filter, $http, socket, growl) {
     $scope.dealsOnly = false;
     $scope.yelpOffset = 0;
     $scope.yelpSearchType = "cll";
+    $scope.yelpSortType = 0;
+    $scope.yelpNextDisabled = false;
+    $scope.googleSortType = 0;
     $scope.showLoading = true;
-    $scope.sortType = 0;
-    $scope.searchType = "";
 
     $scope.createGroup = function () {
         //Get groups and check for duplicate
@@ -202,12 +203,12 @@ function vteController($scope, $filter, $http, socket, growl) {
             $scope.$apply(function() {
                 $scope.suggestionTitle = "Yelp Suggestions";
             });
-            $scope.getYelpData($scope.searchType, $scope.sortType);
+            $scope.getYelpData($scope.yelpSearchType, $scope.yelpSortType);
         } else {
             $scope.$apply(function() {
                 $scope.suggestionTitle = "Google Suggestions";
             });
-            getGoogleLocalData();
+            _getGoogleData(0);
         }
     });
 
@@ -218,7 +219,8 @@ function vteController($scope, $filter, $http, socket, growl) {
     //YELP calls
     $scope.getMoreYelpData = function() {
         $scope.yelpOffset = $scope.yelpOffset + 20;
-        _getYelpData($scope.sortType);
+        if($scope.yelpSortType != 0) $scope.yelpNextDisabled = true;
+        _getYelpData($scope.yelpSortType);
     };
 
     $scope.updateYelpSortData = function (s){
@@ -228,9 +230,10 @@ function vteController($scope, $filter, $http, socket, growl) {
     };
 
 
-    $scope.getYelpData = function(searchType) {
-        $scope.searchType = searchType;
-        _getYelpData($scope.sortType);
+    $scope.getYelpData = function(searchType, yelpSortType) {
+        $scope.businessData = [];
+        $scope.yelpSearchType = searchType;
+        _getYelpData(yelpSortType);
     };
 
     $scope.updateYelpSortDataWithDeals = function() {
@@ -239,13 +242,13 @@ function vteController($scope, $filter, $http, socket, growl) {
         _getYelpData();
     };
 
-    function _getYelpData(sortType){
-        if(sortType != null) {
-            $scope.sortType = sortType;
-        }
+    function _getYelpData(yelpSortType){
         $scope.showLoading = true;
-        if ($scope.searchType  == "city" || $scope.yelpSearchType == 'city'){
-            $http.get("/yelp/city/" + $scope.location + "?deals= " + $scope.dealsOnly + "&offset=" + $scope.yelpOffset + "&sortType=" + $scope.sortType).success(function (doc) {
+        if(yelpSortType != null) {
+            $scope.yelpSortType = yelpSortType;
+        }
+        if ($scope.yelpSearchType == 'city'){
+            $http.get("/yelp/city/" + $scope.location + "?deals= " + $scope.dealsOnly + "&offset=" + $scope.yelpOffset + "&yelpSortType=" + $scope.yelpSortType).success(function (doc) {
                 $scope.businessData = doc.businesses;
                 $scope.showLoading = false;
             });
@@ -254,8 +257,8 @@ function vteController($scope, $filter, $http, socket, growl) {
                 navigator.geolocation.getCurrentPosition(function (position) {
                     $scope.$apply(function() {
                         var cll = position.coords.latitude + "," + position.coords.longitude;
-                        //$scope.location = cll;
-                        $http.get("/yelp/ll/" + cll + "?deals=" + $scope.dealsOnly + "&offset=" + $scope.yelpOffset + "&sortType=" + $scope.sortType).success(function (doc) {
+                        $scope.location = cll;
+                        $http.get("/yelp/ll/" + cll + "?deals=" + $scope.dealsOnly + "&offset=" + $scope.yelpOffset + "&yelpSortType=" + $scope.yelpSortType).success(function (doc) {
                             $scope.businessData.push.apply($scope.businessData, doc.businesses);
                             $scope.showLoading = false;
                         });
@@ -267,7 +270,13 @@ function vteController($scope, $filter, $http, socket, growl) {
 
 
     //Google Local calls
-    var getGoogleLocalData = function (){
+    $scope.updateGoogleSortData = function (googleSortType) {
+        $scope.showLoading = true;
+        $scope.googleSortType = googleSortType;
+        _getGoogleData(googleSortType);
+    };
+
+    var _getGoogleData = function (googleSortType){
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(function (position) {
                 var pyrmont = new google.maps.LatLng(position.coords.latitude,position.coords.longitude);
@@ -279,17 +288,30 @@ function vteController($scope, $filter, $http, socket, growl) {
 
                 var request = {
                     location: pyrmont,
-                    //radius: '5000',
-                    types: ['restaurant'],
-                    rankBy: google.maps.places.RankBy.DISTANCE
+                    types: ['restaurant']
                 };
 
+                request.rankBy = (googleSortType === 1) ? google.maps.places.RankBy.DISTANCE:google.maps.places.RankBy.PROMINENCE;
+                //Rank by distance can't have a radius but by Prominence it needs one.
+                if(googleSortType === 0) request.radius = "5000";
+
                 service = new google.maps.places.PlacesService(map);
-                service.nearbySearch(request, function(results, status){
+                service.nearbySearch(request, function(results, status, pagination){
                     if (status == google.maps.places.PlacesServiceStatus.OK) {
                         $scope.$apply(function() {
                             $scope.businessData = results;
+                            $scope.showLoading = false;
                         });
+                        if (pagination.hasNextPage) {
+                            var moreButton = document.getElementById('nextBtn');
+                            moreButton.disabled = false;
+                            google.maps.event.addDomListenerOnce(moreButton, 'click',
+                                function() {
+                                    moreButton.disabled = true;
+                                    pagination.nextPage();
+                                }
+                            );
+                        }
                     }
                 });
             });

@@ -208,19 +208,27 @@
                         <div ng-show="currentSuggestionGroup == 'yelp'" >
                             <label for="yelp_city">Enter City</label>
                             <input type="text" class="form-control" id="yelp_city" placeholder="City" ng-model="location">
-                            <button class="btn btn-primary" title="Enter a City" ng-click="getYelpData('city', sortType);" ng-disabled="location.length==0">Yelp By City</button>
-                            <button class="btn btn-primary" title="Get Current Location" ng-click="getYelpData('cll', sortType)">
+                            <button class="btn btn-primary" title="Enter a City" ng-click="getYelpData('city', yelpSortType);" ng-disabled="location.length==0">Yelp By City</button>
+                            <button class="btn btn-primary" title="Get Current Location" ng-click="getYelpData('cll', yelpSortType)">
                                 <span class="glyphicon glyphicon-map-marker hand"  aria-hidden="true" ></span>
                             </button>
                             <br/><br/>
                             <label>Sort Again By:</label>
                             <div class="btn-group" role="group">
-                                <button type="button" class="btn btn-default" ng-class="{active:sortType === 0}" ng-click="updateYelpSortData(0)">Best Match</button>
-                                <button type="button" class="btn btn-default" ng-class="{active:sortType === 1}" ng-click="updateYelpSortData(1)">Location</button>
+                                <button type="button" class="btn btn-default" ng-class="{active:yelpSortType === 0}" ng-click="updateYelpSortData(0)">Best Match</button>
+                                <button type="button" class="btn btn-default" title="Yelp will only allow up to 40 businesses when searching by location.  Search by 'best' match for more than 40"
+                                        ng-class="{active:yelpSortType === 1}" ng-click="updateYelpSortData(1)">Location</button>
                                 <button type="button" class="btn btn-default" title="The rating sort is not strictly sorted by the rating value, but by an adjusted rating value that takes into account the number of ratings, similar to a bayesian average. This is so a business with 1 rating of 5 stars doesn’t immediately jump to the top."
-                                        ng-class="{active:sortType === 2}" ng-click="updateYelpSortData(2)">Rating</button>
+                                        ng-class="{active:yelpSortType === 2}" ng-click="updateYelpSortData(2)">Rating</button>
                             </div>
                             <button class="btn btn-default" ng-class="{active:dealsOnly === true}" ng-click="updateYelpSortDataWithDeals()">Deals Only</button>
+                        </div>
+                        <div ng-show="currentSuggestionGroup == 'google'">
+                            <label>Sort Again By:</label>
+                            <div class="btn-group" role="group">
+                                <button type="button" class="btn btn-default" ng-class="{active:googleSortType === 0}" ng-click="updateGoogleSortData(0)">Best Match</button>
+                                <button type="button" class="btn btn-default" ng-class="{active:googleSortType === 1}" ng-click="updateGoogleSortData(1)">Location</button>
+                            </div>
                         </div>
                         <div ng-repeat="business in businessData">
                             <div ng-show="currentSuggestionGroup == 'yelp'">
@@ -252,13 +260,10 @@
                             </div>
                         </div>
                         <div>
-                            <!--<span ng-show="businessData.length === 0 || showLoading===true">Loading . . .</span>-->
-                            <span ng-show="showLoading===true">Loading . . .</span>
+                            <span ng-show="showLoading === true">Loading . . .</span>
                         </div>
-                        <button class="btn btn-primary pull-right"
-                                title="Yelp will only allow up to 40 businesses when searching by location.  Search by 'best' match for more than 40"
-                                ng-disabled="businessData.length >= 40" ng-hide="businessData.length === 0 || sortType == 0" ng-click="getMoreYelpData()">Next 20</button>
-                        <button class="btn btn-primary pull-right" ng-show="businessData.length > 0 && sortType === 0" ng-click="getMoreYelpData()">Next 20</button>
+                        <button class="btn btn-primary pull-right" ng-show="businessData.length > 0 && currentSuggestionGroup == 'yelp'" ng-disabled="yelpNextDisabled" ng-click="getMoreYelpData()">Next 20</button>
+                        <button id="nextBtn" class="btn btn-primary pull-right" ng-show="businessData.length > 0 && currentSuggestionGroup == 'google'">Next Page</button>
                     </div>
                 </form>
             </div>
