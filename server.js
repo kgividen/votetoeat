@@ -10,7 +10,7 @@ var app = require('./app'),
 /**
  * Get port from environment and store in Express.
  */
-var PORT = process.env.PORT || process.env.OPENSHIFT_NODEJS_PORT || 3000;
+var PORT = process.env.OPENSHIFT_NODEJS_PORT || process.env.PORT || 3000;
 var IPADDRESS = process.env.OPENSHIFT_NODEJS_IP || '';
 app.set('port', PORT);
 
