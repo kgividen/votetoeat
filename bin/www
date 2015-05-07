@@ -1,18 +1,21 @@
+#!/usr/bin/env node
+
 /**
  * Module dependencies.
  */
 
-var app = require('./app'),
-    debug = require('debug')('VoteToEat:server'),
+var app = require('../app'),
+    debug = require('debug')('votetoeat'),
     http = require('http');
-    socket = require('./sockets');
+    socket = require('../sockets');
 
 /**
  * Get port from environment and store in Express.
  */
-var PORT = process.env.OPENSHIFT_NODEJS_PORT || process.env.PORT || 3000;
+var port = process.env.OPENSHIFT_NODEJS_PORT || process.env.PORT || 3000;
+port = normalizePort(port);
 var IPADDRESS = process.env.OPENSHIFT_NODEJS_IP || '';
-app.set('port', PORT);
+app.set('port', port);
 
 /**
  * Create HTTP server.
@@ -27,10 +30,31 @@ var server = http.createServer(app);
 var io = require('socket.io').listen(server);
 io.sockets.on('connection', socket);
 
-server.listen(PORT, IPADDRESS);
+server.listen(port, IPADDRESS);
 server.on('error', onError);
 server.on('listening', onListening);
-console.log("Listening on: " + IPADDRESS + ":" + PORT);
+
+/**
+ * Normalize a port into a number, string, or false.
+ */
+
+function normalizePort(val) {
+  var port = parseInt(val, 10);
+
+  if (isNaN(port)) {
+    // named pipe
+    return val;
+  }
+
+  if (port >= 0) {
+    // port number
+    return port;
+  }
+
+  return false;
+}
+
+
 
 /**
  * Event listener for HTTP server "error" event.
@@ -41,9 +65,9 @@ function onError(error) {
         throw error;
     }
 
-    var bind = typeof PORT === 'string'
-        ? 'Pipe ' + PORT
-        : 'Port ' + PORT;
+    var bind = typeof port === 'string'
+        ? 'Pipe ' + port
+        : 'port ' + port;
 
     // handle specific listen errors with friendly messages
     switch (error.code) {

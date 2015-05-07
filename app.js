@@ -5,24 +5,32 @@ var express = require('express'),
     cookieParser = require('cookie-parser'),
     bodyParser = require('body-parser');
 
-//We're just going to hardcode into this one js file for now.
+var routes = require('./routes/index');
+var users = require('./routes/users');
 
 var app = express();
 
 app.use(favicon(__dirname + '/public/icons/favicon.ico'));
+
+//view engine setup
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'hbs');
+
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(__dirname + '/public'));
+app.use(express.static(path.join(__dirname, 'public')));
 
+app.use('/', routes);
+app.use('/users', users);
 
 // catch 404 and forward to error handler
-//app.use(function(req, res, next) {
-//  var err = new Error('Not Found');
-//  err.status = 404;
-//  next(err);
-//});
+app.use(function(req, res, next) {
+    var err = new Error('Not Found');
+    err.status = 404;
+    next(err);
+});
 
 // error handlers
 
@@ -40,14 +48,16 @@ if (app.get('env') === 'development') {
 
 // production error handler
 // no stacktraces leaked to user
-//app.use(function(err, req, res, next) {
-//  res.status(err.status || 500);
-//  res.render('error', {
-//    message: err.message,
-//    error: {}
-//  });
-//});
+app.use(function(err, req, res, next) {
+ res.status(err.status || 500);
+ res.render('error', {
+    message: err.message,
+    error: {}
+ });
+});
 
+
+//YELP REST CALLS
 var yelp = require("yelp").createClient({
     consumer_key: "p1Tm7719umX9iFlKkhujMw",
     consumer_secret: "helHs8hWlaGdsI9PA43PU3FHlRY",
