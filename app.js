@@ -58,6 +58,7 @@ app.use(function(err, req, res, next) {
 
 
 //YELP REST CALLS
+//TODO move to own service
 var yelp = require("yelp").createClient({
     consumer_key: "p1Tm7719umX9iFlKkhujMw",
     consumer_secret: "helHs8hWlaGdsI9PA43PU3FHlRY",

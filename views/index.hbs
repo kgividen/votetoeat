@@ -1,2 +1,28 @@
-<h1>{{title}}</h1>
-<p>Welcome to {{title}}</p>
+<div class="container" role="main" ng-hide="showMainApp">
+    <div class="jumbotron">
+        <h1>Vote To Eat!</h1>
+        <p>Tired of arguing about where to eat?  This site is for you.</p>
+        <div growl inline="true" reference="generalMessages"></div>
+        <!--<p id="createGroupBox" ng-show="showGroupBox">-->
+            <!--<button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#groupModal" ng-click="joinOrCreateBtn = 'create'">Create Group &raquo;</button>-->
+            <!--<button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#groupModal" ng-click="joinOrCreateBtn = 'join'">Join Group &raquo;</button>-->
+        <!--</p>-->
+        <div class="widget">
+            <form name="login-form" id="login-form" method="post" action="users/login">
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required />
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required />
+                    <label for="rememberMe">Remember me</label>
+                    <input type="checkbox" id="rememberMe" name="rememberMe" />
+                </div>
+                <div class="form-submit">
+                    <input class="btn btn-primary" type="submit" value="Log in" />
+                        or <a href="/users/create">Create an account</a>
+                    <div style="color:red;">{{error}}</div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

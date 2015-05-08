@@ -6,9 +6,23 @@ router.get('/', function(req, res, next) {
   res.send('respond with a resource');
 });
 
-// GET /users/view
-router.get('/view', function(req, res, next) {
-  res.send('user view');
+router.get('/create', function (req, res, next) {
+    var vm = {title: 'Create an account'};
+    res.render('users/create', vm);
+});
+
+router.post('/create', function (req, res, next) {
+    var somethingWrong = false;
+    if (somethingWrong) {
+        var vm = {
+            title: 'Create an account',
+            input: req.body,
+            error: 'Something is wrong'
+        };
+        delete vm.input.password;
+        return res.render('users/create', vm);
+    }
+    res.redirect('/main');
 });
 
 module.exports = router;
