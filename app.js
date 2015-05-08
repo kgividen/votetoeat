@@ -3,10 +3,21 @@ var express = require('express'),
     favicon = require('serve-favicon'),
     logger = require('morgan'),
     cookieParser = require('cookie-parser'),
-    bodyParser = require('body-parser');
+    bodyParser = require('body-parser'),
+    mongoose = require('mongoose'),
+    passport = require('passport'),
+    expressSession = require('express-session');
 
+var config = require('./config');
 var routes = require('./routes/index');
 var users = require('./routes/users');
+var main = require('./routes/main');
+
+var passportConfig = require('./auth/passport-config');
+var restrict = require('./auth/restrict');
+passportConfig();
+
+mongoose.connect(config.mongoUri);
 
 var app = express();
 
@@ -22,8 +33,17 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use(expressSession({
+    secret: 'BlahBlah',
+    saveUnitialized: false,
+    resave: false
+}));
+app.use(passport.initialize());
+app.use(passport.session());
+
 app.use('/', routes);
 app.use('/users', users);
+app.use('/main', main);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
