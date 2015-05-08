@@ -1,18 +1,21 @@
-var express = require('express'),
-    path = require('path'),
-    favicon = require('serve-favicon'),
-    logger = require('morgan'),
-    cookieParser = require('cookie-parser'),
-    bodyParser = require('body-parser'),
-    mongoose = require('mongoose'),
-    passport = require('passport'),
-    expressSession = require('express-session'),
-    flash = require('connect-flash');
+var express = require('express');
+var path = require('path');
+var favicon = require('serve-favicon');
+var logger = require('morgan');
+var cookieParser = require('cookie-parser');
+var bodyParser = require('body-parser');
+var mongoose = require('mongoose');
+var passport = require('passport');
+var expressSession = require('express-session');
+var flash = require('connect-flash');
+var connectMongo = require('connect-mongo');
 
 var config = require('./config');
 var routes = require('./routes/index');
 var users = require('./routes/users');
 var main = require('./routes/main');
+
+var MongoStore = connectMongo(expressSession);
 
 var passportConfig = require('./auth/passport-config');
 var restrict = require('./auth/restrict');
@@ -37,7 +40,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(expressSession({
     secret: 'BlahBlah',
     saveUninitialized: false,
-    resave: false
+    resave: false,
+    store: new MongoStore({
+        mongooseConnection: mongoose.connection
+    })
 }));
 app.use(flash());
 app.use(passport.initialize());
