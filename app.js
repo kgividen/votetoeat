@@ -6,7 +6,8 @@ var express = require('express'),
     bodyParser = require('body-parser'),
     mongoose = require('mongoose'),
     passport = require('passport'),
-    expressSession = require('express-session');
+    expressSession = require('express-session'),
+    flash = require('connect-flash');
 
 var config = require('./config');
 var routes = require('./routes/index');
@@ -35,9 +36,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(expressSession({
     secret: 'BlahBlah',
-    saveUnitialized: false,
+    saveUninitialized: false,
     resave: false
 }));
+app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
 

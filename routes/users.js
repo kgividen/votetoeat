@@ -30,9 +30,11 @@ router.post('/create', function (req, res, next) {
     });
 });
 
-router.post('/login', passport.authenticate('local'), function (req, res, next) {
-    res.redirect('/main');
-});
+router.post('/login', passport.authenticate('local', {
+    failureRedirect: '/',
+    successRedirect: '/main',
+    failureFlash: 'Invalid credentials'
+}));
 
 router.get('/logout', function(req, res, next) {
     req.logout();

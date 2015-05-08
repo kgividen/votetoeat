@@ -6,7 +6,10 @@ router.get('/', function(req, res, next) {
     if (req.user) {
         return res.redirect('/main');
     }
-    var vm = { title: 'Login' } ;
+    var vm = {
+        title: 'Login',
+        error: req.flash('error')
+    };
     res.render('index', vm);
 });
 

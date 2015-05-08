@@ -3,9 +3,6 @@ var router = express.Router();
 var restrict = require('../auth/restrict');
 
 router.get('/', restrict, function(req, res, next) {
-    if (!req.isAuthenticated()) {
-        return res.redirect('/');
-    }
     var vm = {
         title: 'Main',
         firstName: req.user ? req.user.firstName : null
