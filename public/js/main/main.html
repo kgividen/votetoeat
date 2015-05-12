@@ -1,13 +1,15 @@
 <div growl reference="generalMessages"></div>
-<p id="createGroupBox" ng-show="showGroupBox">
+<div class="row">
+    <h1 class="pull-left">Hello {{userName}}</h1>
+</div>
+<div id="createGroupBox" ng-hide="showMainApp">
+    <div class="row">
+        <h4 class="lead">Create a group or join a group so you add places and figure out where to eat.</h4>
+    </div>
     <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#groupModal" ng-click="joinOrCreateBtn = 'create'">Create Group &raquo;</button>
     <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#groupModal" ng-click="joinOrCreateBtn = 'join'">Join Group &raquo;</button>
-</p>
-<div ng-bind="userName"></div>
+</div>
 <div id="main_app" class="container" ng-cloak ng-show="showMainApp">
-    <div class="row">
-        <h1 class="pull-left">Hello {{userName}}.</h1>
-    </div>
     <div class="row">
         <h4 class="lead">Add some places you'd like to eat.  Give each place a score based on how much you'd like to eat there.  The highest score wins!</h4>
     </div>
@@ -98,20 +100,9 @@
                         <label for="inputGroupName">Group Name</label>
                         <input type="text" class="form-control" id="inputGroupName" placeholder="Group Name" ng-model="groupName">
                     </div>
-                    <button ng-show="joinOrCreateBtn == 'create'" type="submit" class="btn btn-primary" ng-click="createGroup();addUser()">Create Group</button>
-                    <button ng-show="joinOrCreateBtn == 'join'" type="submit" class="btn btn-primary" ng-click="addUser()">Join Group</button>
+                    <button ng-show="joinOrCreateBtn == 'create'" type="submit" data-dismiss="modal" class="btn btn-primary" ng-click="createGroup()">Create Group</button>
+                    <button ng-show="joinOrCreateBtn == 'join'" type="submit" data-dismiss="modal" class="btn btn-primary" ng-click="joinGroup()">Join Group</button>
                 </form>
-                <!--<div ng-show="showSetUserName">-->
-                    <!--<label for="group_name">Group Name</label>-->
-                    <!--<span id="group_name" ng-bind="groupName"></span>-->
-                    <!--<form  class="form-inline">-->
-                        <!--<div class="form-group">-->
-                            <!--<label for="inputUserName">Your Name</label>-->
-                            <!--<input type="text" class="form-control" id="inputUserName" focus-on="showSetUserName" placeholder="User Name" ng-model="userName" >-->
-                        <!--</div>-->
-                        <!--<button type="submit" class="btn btn-primary" data-dismiss="modal" ng-click="addUser()">Save</button>-->
-                    <!--</form>-->
-                <!--</div>-->
             </div>
         </div>
     </div>
