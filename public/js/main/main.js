@@ -30,7 +30,7 @@
         $scope.showLoading = true;
 
         //Get the logged in user from the server.
-        $http.get("/users/user/").success(function (user) {
+        $http.get("/rest/user/").success(function (user) {
             $scope.user = user;
             $scope.userName = user.firstName;
         }).error(function () {

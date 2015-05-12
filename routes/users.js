@@ -32,18 +32,18 @@ router.post('/create', function (req, res, next) {
     });
 });
 
-router.get('/user',  restrict, function (req, res, next) {
-    var vm = {};
-    if(req.user) {
-        vm = {
-            firstName: req.user.firstName,
-            lastName: req.user.lastName,
-            email: req.user.email,
-            created: req.user.created
-        }
-    }
-    res.send(vm);
-});
+//router.get('/user',  restrict, function (req, res, next) {
+//    var vm = {};
+//    if(req.user) {
+//        vm = {
+//            firstName: req.user.firstName,
+//            lastName: req.user.lastName,
+//            email: req.user.email,
+//            created: req.user.created
+//        }
+//    }
+//    res.send(vm);
+//});
 
 router.post('/login',
     function(req, res, next) {
