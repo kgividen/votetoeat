@@ -3,6 +3,7 @@ var router = express.Router();
 var userService = require('../services/user-service');
 var passport = require('passport');
 var config = require('../config');
+var restrict = require('../auth/restrict');
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
@@ -29,6 +30,19 @@ router.post('/create', function (req, res, next) {
             res.redirect('/main');
         });
     });
+});
+
+router.get('/user',  restrict, function (req, res, next) {
+    var vm = {};
+    if(req.user) {
+        vm = {
+            firstName: req.user.firstName,
+            lastName: req.user.lastName,
+            email: req.user.email,
+            created: req.user.created
+        }
+    }
+    res.send(vm);
 });
 
 router.post('/login',

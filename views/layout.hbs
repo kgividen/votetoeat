@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html ng-app="myApp">
+<html>
 <head>
     <title>{{#if title}}{{title}}{{/if}} - Vote To Eat</title>
     <meta charset="utf-8">
@@ -31,20 +31,15 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
     <link type="text/css" href="css/lib/angular-growl-0.7.3.min.css" rel="stylesheet"/>
     <link href="css/custom.css" rel="stylesheet">
-
-    <!--Loading only angular here but all other js at the bottom.  Mainly so ng-cloak works correctly-->
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.15/angular.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.15/angular-animate.min.js"></script>
-    <script src="js/lib/angular-growl-0.7.3.min.js"></script>
-
 </head>
 
 <!--<body ng-controller="vteController" role="document">-->
 <body role="document">
 <div class="container">
     <div class="clearfix">
-        <nav >
+        <nav>
             <ul class="nav nav-pills pull-right">
+
                 <!--<li role="presentation"><a href="./index.html" ng-click="logout()">Logout</a></li>-->
                 {{#if firstName}}
                     <li role="presentation"><a href="/users/logout">Logout</a></li>
@@ -67,20 +62,6 @@
         </footer>
     </div>
 </div> <!--Container-->
-
-<!-- JavaScript Files================================================== -->
-<!-- Placed at the end of the document so the pages load faster -->
-<script src="https://codeorigin.jquery.com/jquery-1.10.2.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.12.1/ui-bootstrap-tpls.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.6.0/underscore-min.js"></script>
-<script type='text/javascript' src='/socket.io/socket.io.js'></script>
-<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?libraries=places"></script>
-
-<script type="text/javascript" src='js/vte_util.js'></script>
-<script type="text/javascript" src='js/directives.js'></script>
-<script type="text/javascript" src='js/services.js'></script>
-<script type="text/javascript" src='js/controllers.js'></script>
 
 <script>
     (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
