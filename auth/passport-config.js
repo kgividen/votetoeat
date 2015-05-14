@@ -18,7 +18,7 @@ module.exports = function() {
                 }
 
                 if (!same) {
-                    return (null, null);
+                    return next(null, null);
                 }
 
                 next(null, user);
