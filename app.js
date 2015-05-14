@@ -4,7 +4,7 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-var mongoose = require('mongoose');
+var mongoskin = require('mongoskin');
 var passport = require('passport');
 var expressSession = require('express-session');
 var flash = require('connect-flash');
@@ -19,10 +19,9 @@ var rest = require('./routes/rest');
 var MongoStore = connectMongo(expressSession);
 
 var passportConfig = require('./auth/passport-config');
-var restrict = require('./auth/restrict');
 passportConfig();
 
-mongoose.connect(config.mongoUri);
+mongoskin.db(config.mongoUri, {safe:true});
 
 var app = express();
 
@@ -38,14 +37,16 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+
 app.use(expressSession({
     secret: 'BlahBlah',
     saveUninitialized: false,
     resave: false,
     store: new MongoStore({
-        mongooseConnection: mongoose.connection
+        url : config.mongoUri
     })
 }));
+
 app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());

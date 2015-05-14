@@ -1,5 +1,5 @@
+var db = require('../db/mongo-dao.js');
 var bcrypt = require('bcrypt');
-var User = require('../models/user').User;
 
 exports.addUser = function(user, next) {
     bcrypt.hash(user.password, 10, function(err, hash) {
@@ -7,25 +7,23 @@ exports.addUser = function(user, next) {
             return next(err);
         }
 
-        var newUser = new User({
+        var newUser = {
             firstName: user.firstName,
             lastName: user.lastName,
             email: user.email.toLowerCase(),
             password: hash
-        });
+        };
 
-        newUser.save(function(err) {
-            if (err) {
-                return next(err);
-            }
-            next(null);
-        })
+
+        db.addUser(newUser, function(err, user){
+            next(err, user);
+        });
     })
 
 };
 
 exports.findUser = function(email, next) {
-    User.findOne({email: email.toLowerCase()}, function(err, user){
+    db.findUser({email: email.toLowerCase()}, function(err, user){
         next(err, user);
     });
 };

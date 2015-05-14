@@ -30,6 +30,7 @@
         $scope.showLoading = true;
 
         //Get the logged in user from the server.
+        // AUTHENTICATION REQUIRED
         $http.get("/rest/user/").success(function (user) {
             $scope.user = user;
             $scope.userName = user.firstName;
@@ -38,6 +39,18 @@
         });
 
         $scope.createGroup = function () {
+
+            //Get the logged in user from the server.
+            //AUTHENTICATION REQUIRED
+            var groupName = encodeURIComponent($scope.groupName);
+            $http.put("/rest/group/" + groupName).success(function (res) {
+
+            }).error(function () {
+                growl.error("Something went wrong please try again.");
+            });
+
+
+
             //Get groups and check for duplicate
             socket.emit('check_group_name', {
                 group: $scope.groupName
