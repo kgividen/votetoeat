@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html ng-app="app">
 <head>
     <title>{{#if title}}{{title}}{{/if}} - Vote To Eat</title>
     <meta charset="utf-8">
@@ -42,7 +42,7 @@
 
                 <!--<li role="presentation"><a href="./index.html" ng-click="logout()">Logout</a></li>-->
                 {{#if firstName}}
-                    <li role="presentation"><a href="/users/logout">Logout</a></li>
+                    <li role="presentation"><a id="logoutBtn" href="/users/logout">Logout</a></li>
                 {{/if}}
                 <!--<li role="presentation"><a href="#">About</a></li>-->
                 <!--<li role="presentation"><a href="#">Contact</a></li>-->
