@@ -7,8 +7,8 @@ exports.addGroup = function(group, next) {
         places: group.places
     };
 
-    db.addGroup(newGroup, function(err, user){
-        next(err, user);
+    db.addGroup(newGroup, function(err, group){
+        next(err, group);
     });
 };
 

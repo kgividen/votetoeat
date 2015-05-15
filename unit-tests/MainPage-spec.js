@@ -47,6 +47,75 @@ describe("Main Page Controller", function() {
         expect(scope.googleSortType).toEqual(0);
         expect(scope.showLoading).toEqual(true);
     });
+});
+
+describe("Main Page Controller Server Calls", function() {
+    beforeEach(module("app"));
+    var MainController,
+        scope,
+        httpBackend;
+
+    beforeEach(inject(function ($rootScope, $httpBackend, $controller) {
+        httpBackend = $httpBackend;
+        scope = $rootScope.$new();
+        MainController = $controller("MainController", {
+            $scope: scope
+        });
+    }));
+
+    afterEach(function() {
+        httpBackend.verifyNoOutstandingExpectation();
+        httpBackend.verifyNoOutstandingRequest();
+    });
+
+    it('should get the userName from the server and assign it.', function() {
+        httpBackend.expect('GET', '/rest/user/')
+            .respond({
+                    firstName: "Kent",
+                    lastName: "Blah"
+            });
+
+        // have to use $apply to trigger the $digest which will
+        // take care of the HTTP request
+        scope.$apply(function() {
+            scope.getAuthenticatedUser();
+        });
+        httpBackend.flush(); //This is when it actually makes the call.
+
+        expect(scope.userName).toEqual('Kent');
+    });
+
+    xit('should put the group into the DB', function() {
+        httpBackend.expect('PUT', '/rest/group/')
+            .respond({
+            });
+
+        scope.$apply(function() {
+            scope.createGroup();
+        });
+
+        httpBackend.flush();
+        //TODO make sure it was created in the DB
+        //expect(scope.groupName).toEqual();
+    });
+
+    it('should get Yelp business data from the passed in city.', function() {
+        //TODO should be able to set the $scope.location variable here.
+
+        httpBackend.expect('GET', '/yelp/city/?deals=false&offset=0&yelpSortType=0')
+            .respond({
+                businesses: ['Business1']
+            });
+
+        scope.$apply(function() {
+            scope.getYelpData('city', 0);
+        });
+
+        httpBackend.flush();
+
+        expect(scope.businessData).toEqual(['Business1']);
+    });
+
 
 });
 

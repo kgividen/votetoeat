@@ -65,8 +65,11 @@ module.exports = function(config) {
 
     // start these browsers
     // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-    browsers: ['Chrome', 'Firefox', 'Safari'],
+    //browsers: ['Chrome', 'Firefox', 'Safari'],
+    browsers: ['PhantomJS'],
+    //browsers: ['Chrome'],
       plugins : [
+          'karma-phantomjs-launcher',
           'karma-chrome-launcher',
           'karma-safari-launcher',
           'karma-firefox-launcher',

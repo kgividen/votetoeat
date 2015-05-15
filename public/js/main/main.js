@@ -10,6 +10,7 @@
         $scope.users = [];
         $scope.userName = '';
         $scope.places = [];
+        $scope.placeName = "";
         $scope.vote_max = 10;
         $scope.voted = false;
         $scope.showMainApp = false;
@@ -28,15 +29,21 @@
         $scope.yelpNextDisabled = false;
         $scope.googleSortType = 0;
         $scope.showLoading = true;
+        $scope.user = {};
+
 
         //Get the logged in user from the server.
         // AUTHENTICATION REQUIRED
-        $http.get("/rest/user/").success(function (user) {
-            $scope.user = user;
-            $scope.userName = user.firstName;
-        }).error(function () {
-            growl.error("Something went wrong please try again.");
-        });
+        $scope.getAuthenticatedUser = function () {
+            $http.get("/rest/user/").success(function (user) {
+                $scope.user = user;
+                $scope.userName = user.firstName;
+            }).error(function () {
+                growl.error("Something went wrong please try again.");
+            });
+        };
+
+        //$scope.runTest();
 
         $scope.createGroup = function () {
 
@@ -44,7 +51,7 @@
             //AUTHENTICATION REQUIRED
             var groupName = encodeURIComponent($scope.groupName);
             $http.put("/rest/group/" + groupName).success(function (res) {
-
+                dump(JSON.stringify(res));
             }).error(function () {
                 growl.error("Something went wrong please try again.");
             });
@@ -92,8 +99,8 @@
         };
 
         $scope.addPlace = function () {
-            if (!$scope.placeName) return;  //make sure they've entered a place name.
 
+            if (!$scope.placeName) return;  //make sure they've entered a place name.
             _addPlace({
                 "name": $scope.placeName
             });
@@ -279,7 +286,7 @@
                 $scope.yelpSortType = yelpSortType;
             }
             if ($scope.yelpSearchType == 'city') {
-                $http.get("/yelp/city/" + $scope.location + "?deals= " + $scope.dealsOnly + "&offset=" + $scope.yelpOffset + "&yelpSortType=" + $scope.yelpSortType).success(function (doc) {
+                $http.get("/yelp/city/" + $scope.location + "?deals=" + $scope.dealsOnly + "&offset=" + $scope.yelpOffset + "&yelpSortType=" + $scope.yelpSortType).success(function (doc) {
                     $scope.businessData = doc.businesses;
                     $scope.showLoading = false;
                 });

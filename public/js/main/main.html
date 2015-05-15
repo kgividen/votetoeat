@@ -9,7 +9,7 @@
     <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#groupModal" ng-click="joinOrCreateBtn = 'create'">Create Group &raquo;</button>
     <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#groupModal" ng-click="joinOrCreateBtn = 'join'">Join Group &raquo;</button>
 </div>
-<div id="main_app" class="container" ng-cloak ng-show="showMainApp">
+<div id="main_app" class="container" data-ng-init="getAuthenticatedUser()" ng-cloak ng-show="showMainApp">
     <div class="row">
         <h4 class="lead">Add some places you'd like to eat.  Give each place a score based on how much you'd like to eat there.  The highest score wins!</h4>
     </div>
