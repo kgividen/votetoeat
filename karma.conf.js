@@ -20,7 +20,7 @@ module.exports = function(config) {
         'public/bower/angular-mocks/angular-mocks.js',
         'public/bower/angular-animate/angular-animate.js',
         'public/bower/jquery/dist/jquery.js',
-        'public/bower/jquery/dist/jquery.js',
+        'public/bower/underscore/underscore.js',
         'public/js/lib/*.js',
         'public/js/app.js',
         'public/js/route-config.js',
