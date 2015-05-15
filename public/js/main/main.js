@@ -4,7 +4,7 @@
         .module('app')
         .controller('MainController', MainController);
 
-    MainController.$inject = ['$scope', '$filter', '$http', 'socket', 'growl'];
+    MainController.$inject = ['$rootScope', '$filter', '$http', 'socket', 'growl'];
 
     function MainController($scope, $filter, $http, socket, growl) {
         $scope.users = [];
