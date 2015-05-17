@@ -13,7 +13,7 @@ describe('Main Page', function() {
     });
 });
 
-describe("Main Page Controller", function() {
+describe("Main Controller", function() {
     beforeEach(module("app"));
     var createController,
         $scope,
@@ -55,7 +55,7 @@ describe("Main Page Controller", function() {
         expect($scope.showLoading).toEqual(true);
     });
 
-    it('should be able to add a place to places', function () {
+    it('should be able to add a place to places with the input box', function () {
         $rootScope.placeName = "CoolPlace";
         $scope.addPlace();
         expect($scope.places).toContain({ name: 'CoolPlace', url: undefined, address: undefined, fromType: undefined, rating: undefined, rating_img_url: undefined, deal: undefined, voters: [  ] });
@@ -81,15 +81,39 @@ describe("Main Page Controller", function() {
         expect($scope.currentSuggestionGroup).toEqual("blah");
     });
 
-    xit('should be able to add a business of type yelp', function () {
-        var business = "";
+    it('should be able to add a business of type yelp', function () {
+        $scope.setSuggestionsGroup("yelp");
+
+
+        var business = {
+            id: "CoolPlace",
+            name: "CoolPlace",
+            fromType: "yelp",
+            rating: 5,
+            url: "cool_url",
+            location: {"display_address":["CoolAddress"]},
+            rating_img_url: "cool_rating_url"
+        };
         var type = "yelp";
 
         $scope.addBusiness(business, type);
-        expect($scope.places).toContain({ name: 'CoolPlace', url: undefined, address: undefined, fromType: undefined, rating: undefined, rating_img_url: undefined, deal: undefined, voters: [  ] });
+        expect($scope.places).toContain({ name: 'CoolPlace', url: "cool_url", address: "CoolAddress", fromType: "yelp", rating: 5, rating_img_url: "cool_rating_url", deal: undefined, voters: [  ] });
     });
 
-    xit('should be able to add a business of type google', function () {
+    it('should be able to add a business of type google', function () {
+
+        $scope.setSuggestionsGroup("google");
+
+        var business = {
+            id: "CoolPlace",
+            name: "CoolPlace",
+            fromType: "google",
+            vicinity: "CoolAddress"
+        };
+        var type = "google";
+
+        $scope.addBusiness(business, type);
+        expect($scope.places).toContain({ name: 'CoolPlace', url: undefined, address: "CoolAddress", fromType: "google", rating: undefined, rating_img_url: "", deal: undefined, voters: [  ] });
     });
 
 });

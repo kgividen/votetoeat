@@ -415,8 +415,6 @@
                 }
             });
 
-            console.log("Total votes for: " + currentPlace.name + " is: " + totalVotes);
-
             currentPlace.totalVotes = totalVotes;
 
             //we check for votes because when coming in new we don't need to growl all the previous places

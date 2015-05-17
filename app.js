@@ -15,6 +15,7 @@ var routes = require('./routes/index');
 var users = require('./routes/users');
 var main = require('./routes/main');
 var rest = require('./routes/rest');
+var yelp = require('./routes/yelp');
 
 var MongoStore = connectMongo(expressSession);
 
@@ -55,6 +56,7 @@ app.use('/', routes);
 app.use('/users', users);
 app.use('/main', main);
 app.use('/rest', rest);
+app.use('/yelp', yelp);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -88,29 +90,5 @@ app.use(function(err, req, res, next) {
 });
 
 
-//YELP REST CALLS
-//TODO move to own service
-var yelp = require("yelp").createClient({
-    consumer_key: "p1Tm7719umX9iFlKkhujMw",
-    consumer_secret: "helHs8hWlaGdsI9PA43PU3FHlRY",
-    token: "YzBewOmbd4_vIYqOc1npMLOi_HCXP-BF",
-    token_secret: "p99_WND7cyN79Tq4KKpJLHbOv9w"
-});
-
-// return list of places by city
-app.get('/yelp/city/:location', function(req, res, next) {
-    yelp.search({term: "food", location: req.params.location, offset:req.query.offset, deals_filter:req.query.deals, sort:req.query.yelpSortType}, function(error, data) {
-        console.log(error);
-        res.send(data);
-    });
-});
-
-// return list of places by geo location coords
-app.get('/yelp/ll/:location', function(req, res, next) {
-    yelp.search({term: "food", ll: req.params.location, offset:req.query.offset, deals_filter:req.query.deals, sort:req.query.yelpSortType}, function(error, data) {
-        console.log(error);
-        res.send(data);
-    });
-});
 
 module.exports = app;

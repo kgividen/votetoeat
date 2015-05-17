@@ -24,9 +24,6 @@ exports.config = {
         browser.driver.findElement(by.id('email')).sendKeys('register@gividen.com');
         browser.driver.findElement(by.id('password')).sendKeys('xabler');
         browser.driver.findElement(by.id('submit-login')).click();
-        //expect(browser.driver.findElement(by.tagName('h1')).getText()).toEqual('Hello Kent!');
-        //browser.driver.findElement(by.id('logoutBtn')).click();
-        //expect(browser.driver.findElement(by.id('submit-login')).getAttribute('value')).toMatch('Log in');
 
         return browser.driver.wait(function() {
             return browser.driver.getCurrentUrl().then(function(url) {
