@@ -5,7 +5,7 @@
         .controller('MainController', MainController);
 
     //TODO Figure our vm or $rootScope should be injected.
-    MainController.$inject = ['$scope','$filter', '$http', 'socket', 'growl'];
+    MainController.$inject = ['$rootScope','$filter', '$http', 'socket', 'growl'];
 
     function MainController($scope, $filter, $http, socket, growl) {
 
@@ -167,7 +167,7 @@
 
             // Notify everyone that a new person is here via a message to our messages model
             //TODO TEST THIS
-            growl.info("<b>" + data.place.name + "</b> was added as a place to eat by <b>" + vm.userName + "</b>");
+            growl.info("<b>" + data.place.name + "</b> was added as a place to eat by <b>" + data.place.addedBy + "</b>");
         });
 
         //When someone votes we need to update the total.
@@ -370,6 +370,7 @@
             }
             var place = {
                 "name": p.name,
+                "addedBy":vm.userName,
                 "url": p.url,
                 "address": p.address,
                 "fromType": p.fromType,
@@ -389,7 +390,7 @@
             };
             socket.emit('send:newPlace', newPlace);
 
-            growl.info("<b>" + place.name + "</b> was added as a place to eat by <b>" + vm.userName + "</b>");
+            growl.info("<b>" + place.name + "</b> was added as a place to eat by <b>" + place.addedBy + "</b>");
 
             return "added";
         }

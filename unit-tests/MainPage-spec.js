@@ -51,8 +51,9 @@ describe("Main Controller", function() {
 
     it('should be able to add a place to places with the input box', function () {
         vm.placeName = "CoolPlace";
+        vm.userName = "Kent";
         vm.addPlace();
-        expect(vm.places).toContain({ name: 'CoolPlace', url: undefined, address: undefined, fromType: undefined, rating: undefined, rating_img_url: undefined, deal: undefined, voters: [  ] });
+        expect(vm.places).toContain({ name: 'CoolPlace', addedBy:"Kent", url: undefined, address: undefined, fromType: undefined, rating: undefined, rating_img_url: undefined, deal: undefined, voters: [  ] });
     });
 
     it('should be able to vote for a place and add to TotalVotes then change your vote', function () {
@@ -91,7 +92,7 @@ describe("Main Controller", function() {
         var type = "yelp";
 
         vm.addBusiness(business, type);
-        expect(vm.places).toContain({ name: 'CoolPlace', url: "cool_url", address: "CoolAddress", fromType: "yelp", rating: 5, rating_img_url: "cool_rating_url", deal: undefined, voters: [  ] });
+        expect(vm.places).toContain({ name: 'CoolPlace', addedBy:"", url: "cool_url", address: "CoolAddress", fromType: "yelp", rating: 5, rating_img_url: "cool_rating_url", deal: undefined, voters: [  ] });
     });
 
     it('should be able to add a business of type google', function () {
@@ -107,7 +108,7 @@ describe("Main Controller", function() {
         var type = "google";
 
         vm.addBusiness(business, type);
-        expect(vm.places).toContain({ name: 'CoolPlace', url: undefined, address: "CoolAddress", fromType: "google", rating: undefined, rating_img_url: "", deal: undefined, voters: [  ] });
+        expect(vm.places).toContain({ name: 'CoolPlace', addedBy:"", url: undefined, address: "CoolAddress", fromType: "google", rating: undefined, rating_img_url: "", deal: undefined, voters: [  ] });
     });
 
 });
