@@ -5,9 +5,9 @@
         .controller('MainController', MainController);
 
     //TODO Figure our vm or $rootScope should be injected.
-    MainController.$inject = ['$filter', '$http', 'socket', 'growl'];
+    MainController.$inject = ['$scope','$filter', '$http', 'socket', 'growl'];
 
-    function MainController($filter, $http, socket, growl) {
+    function MainController($scope, $filter, $http, socket, growl) {
 
         var vm = this;
         vm.users = [];
@@ -24,7 +24,6 @@
         vm.suggestionTitle = "Suggestions";
         vm.currentSuggestionGroup = "yelp";
         vm.showSetUserName = false;
-        vm.joinOrCreateBtn = "create";
         vm.dealsOnly = false;
         vm.yelpOffset = 0;
         vm.yelpSearchType = "cll";
@@ -54,7 +53,6 @@
             //AUTHENTICATION REQUIRED
             var groupName = encodeURIComponent(vm.groupName);
             $http.put("/rest/group/" + groupName).success(function (res) {
-                dump(JSON.stringify(res));
             }).error(function () {
                 growl.error("Something went wrong please try again.");
             });
@@ -190,8 +188,12 @@
         });
 
         //set default focuses
-        $('#groupModal').on('shown.bs.modal', function () {
-            $('#inputGroupName').focus();
+        $('#createGroupModal').on('shown.bs.modal', function () {
+            $('#createGroupName').focus();
+        });
+
+        $('#joinGroupModal').on('shown.bs.modal', function () {
+            $('#joinGroupName').focus();
         });
 
         vm.addBusiness = function (business, type) {
@@ -241,12 +243,12 @@
         //TODO is there are way to angularize these modals so we don't need apply?
         $('#suggestionsModal').on('shown.bs.modal', function () {
             if (vm.currentSuggestionGroup == "yelp") {
-                vm.$apply(function () {
+                $scope.$apply(function () {
                     vm.suggestionTitle = "Yelp Suggestions";
                 });
                 vm.getYelpData(vm.yelpSearchType, vm.yelpSortType);
             } else {
-                vm.$apply(function () {
+                $scope.$apply(function () {
                     vm.suggestionTitle = "Google Suggestions";
                 });
                 _getGoogleData(0);
@@ -296,7 +298,7 @@
             } else {
                 if (navigator.geolocation) {
                     navigator.geolocation.getCurrentPosition(function (position) {
-                        vm.$apply(function () {
+                        $scope.$apply(function () {
                             var cll = position.coords.latitude + "," + position.coords.longitude;
                             vm.location = cll;
                             $http.get("/yelp/ll/" + cll + "?deals=" + vm.dealsOnly + "&offset=" + vm.yelpOffset + "&yelpSortType=" + vm.yelpSortType).success(function (doc) {
@@ -339,7 +341,7 @@
                     var service = new google.maps.places.PlacesService(map);
                     service.nearbySearch(request, function (results, status, pagination) {
                         if (status == google.maps.places.PlacesServiceStatus.OK) {
-                            vm.$apply(function () {
+                            $scope.$apply(function () {
                                 vm.businessData = results;
                                 vm.showLoading = false;
                             });

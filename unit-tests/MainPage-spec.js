@@ -40,7 +40,6 @@ describe("Main Controller", function() {
         expect(vm.suggestionTitle).toEqual("Suggestions");
         expect(vm.currentSuggestionGroup).toEqual("yelp");
         expect(vm.showSetUserName).toEqual(false);
-        expect(vm.joinOrCreateBtn).toEqual("create");
         expect(vm.dealsOnly).toEqual(false);
         expect(vm.yelpOffset).toEqual(0);
         expect(vm.yelpSearchType).toEqual("cll");

@@ -6,8 +6,8 @@
     <div class="row">
         <h4 class="lead">Create a group or join a group so you add places and figure out where to eat.</h4>
     </div>
-    <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#groupModal" ng-click="vm.joinOrCreateBtn = 'create'">Create Group &raquo;</button>
-    <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#groupModal" ng-click="vm.joinOrCreateBtn = 'join'">Join Group &raquo;</button>
+    <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#createGroupModal">Create Group &raquo;</button>
+    <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#joinGroupModal">Join Group &raquo;</button>
 </div>
 <div id="main_app" class="container" ng-init="vm.getAuthenticatedUser()" ng-cloak ng-show="vm.showMainApp">
     <div class="row">
@@ -87,22 +87,37 @@
 
 
 <!--MODALS-->
-<div id="groupModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="createGroupModalLabel" aria-hidden="true">
+<div id="createGroupModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="createGroupModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" id="createGroupLabel">Group</h4>
+                <h4 class="modal-title">Group</h4>
             </div>
             <div class="modal-body">
-                <form ng-show="!vm.showSetUserName" class="form-inline">
-                    <div class="form-group">
-                        <label for="inputGroupName">Group Name</label>
-                        <input type="text" class="form-control" id="inputGroupName" placeholder="Group Name" ng-model="vm.groupName">
-                    </div>
-                    <button ng-show="vm.joinOrCreateBtn == 'create'" type="submit" data-dismiss="modal" class="btn btn-primary" ng-click="vm.createGroup()">Create Group</button>
-                    <button ng-show="vm.joinOrCreateBtn == 'join'" type="submit" data-dismiss="modal" class="btn btn-primary" ng-click="vm.joinGroup()">Join Group</button>
-                </form>
+                <div class="form-group">
+                    <label for="createGroupName">Group Name</label>
+                    <input type="text" class="form-control" id="createGroupName" placeholder="Group Name" ng-model="vm.groupName">
+                </div>
+                <button type="submit" data-dismiss="modal" class="btn btn-primary" ng-click="vm.createGroup()">Create Group</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="joinGroupModal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Group</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="joinGroupName">Group Name</label>
+                    <input type="text" class="form-control" id="joinGroupName" placeholder="Group Name" ng-model="vm.groupName">
+                </div>
+                <button type="submit" data-dismiss="modal" class="btn btn-primary" ng-click="vm.joinGroup()">Join Group</button>
             </div>
         </div>
     </div>
