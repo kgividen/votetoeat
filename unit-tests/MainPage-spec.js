@@ -16,73 +16,68 @@ describe('Main Page', function() {
 describe("Main Controller", function() {
     beforeEach(module("app"));
     var createController,
-        $scope,
-        $rootScope;
+        vm;
 
     beforeEach(inject(function ($injector) {
-        $rootScope = $injector.get('$rootScope');
-        $scope = $rootScope.$new();
         var $controller = $injector.get('$controller');
 
         createController = function() {
             return $controller('MainController', {
-                '$scope': $scope,
-                '$rootScope': $rootScope
             });
         };
-        createController();
+        vm = createController();
     }));
     it('should have scope variables set to defaults', function () {
-        expect($scope.users).toEqual([]);
-        expect($scope.places).toEqual([]);
-        expect($scope.vote_max).toEqual(10);
-        expect($scope.voted).toEqual(false);
-        expect($scope.showMainApp).toEqual(false);
-        expect($scope.groupName).toEqual("");
-        expect($scope.voteBtnActive).toEqual(0);
-        expect($scope.businessData).toEqual([]);
-        expect($scope.location).toEqual("");
-        expect($scope.suggestionTitle).toEqual("Suggestions");
-        expect($scope.currentSuggestionGroup).toEqual("yelp");
-        expect($scope.showSetUserName).toEqual(false);
-        expect($scope.joinOrCreateBtn).toEqual("create");
-        expect($scope.dealsOnly).toEqual(false);
-        expect($scope.yelpOffset).toEqual(0);
-        expect($scope.yelpSearchType).toEqual("cll");
-        expect($scope.yelpSortType).toEqual(0);
-        expect($scope.yelpNextDisabled).toEqual(false);
-        expect($scope.googleSortType).toEqual(0);
-        expect($scope.showLoading).toEqual(true);
+        expect(vm.users).toEqual([]);
+        expect(vm.places).toEqual([]);
+        expect(vm.vote_max).toEqual(10);
+        expect(vm.voted).toEqual(false);
+        expect(vm.showMainApp).toEqual(false);
+        expect(vm.groupName).toEqual("");
+        expect(vm.voteBtnActive).toEqual(0);
+        expect(vm.businessData).toEqual([]);
+        expect(vm.location).toEqual("");
+        expect(vm.suggestionTitle).toEqual("Suggestions");
+        expect(vm.currentSuggestionGroup).toEqual("yelp");
+        expect(vm.showSetUserName).toEqual(false);
+        expect(vm.joinOrCreateBtn).toEqual("create");
+        expect(vm.dealsOnly).toEqual(false);
+        expect(vm.yelpOffset).toEqual(0);
+        expect(vm.yelpSearchType).toEqual("cll");
+        expect(vm.yelpSortType).toEqual(0);
+        expect(vm.yelpNextDisabled).toEqual(false);
+        expect(vm.googleSortType).toEqual(0);
+        expect(vm.showLoading).toEqual(true);
     });
 
     it('should be able to add a place to places with the input box', function () {
-        $rootScope.placeName = "CoolPlace";
-        $scope.addPlace();
-        expect($scope.places).toContain({ name: 'CoolPlace', url: undefined, address: undefined, fromType: undefined, rating: undefined, rating_img_url: undefined, deal: undefined, voters: [  ] });
+        vm.placeName = "CoolPlace";
+        vm.addPlace();
+        expect(vm.places).toContain({ name: 'CoolPlace', url: undefined, address: undefined, fromType: undefined, rating: undefined, rating_img_url: undefined, deal: undefined, voters: [  ] });
     });
 
     it('should be able to vote for a place and add to TotalVotes then change your vote', function () {
-        $rootScope.placeName = "CoolPlace";
+        vm.placeName = "CoolPlace";
         var numVotes = 5;
 
-        $scope.addPlace();
+        vm.addPlace();
         var p = {name:"CoolPlace"};
-        $scope.voteForPlace(p, numVotes);
-        var currentPlace = $scope.places[0];
+        vm.voteForPlace(p, numVotes);
+        var currentPlace = vm.places[0];
         expect(currentPlace.totalVotes).toEqual(numVotes);
 
         var changeVote = 2;
-        $scope.voteForPlace(p, changeVote);
+        vm.voteForPlace(p, changeVote);
         expect(currentPlace.totalVotes).toEqual(changeVote);
     });
 
     it('should set the suggestionGroup', function () {
-        $scope.setSuggestionsGroup("blah");
-        expect($scope.currentSuggestionGroup).toEqual("blah");
+        vm.setSuggestionsGroup("blah");
+        expect(vm.currentSuggestionGroup).toEqual("blah");
     });
 
     it('should be able to add a business of type yelp', function () {
-        $scope.setSuggestionsGroup("yelp");
+        vm.setSuggestionsGroup("yelp");
 
 
         var business = {
@@ -96,13 +91,13 @@ describe("Main Controller", function() {
         };
         var type = "yelp";
 
-        $scope.addBusiness(business, type);
-        expect($scope.places).toContain({ name: 'CoolPlace', url: "cool_url", address: "CoolAddress", fromType: "yelp", rating: 5, rating_img_url: "cool_rating_url", deal: undefined, voters: [  ] });
+        vm.addBusiness(business, type);
+        expect(vm.places).toContain({ name: 'CoolPlace', url: "cool_url", address: "CoolAddress", fromType: "yelp", rating: 5, rating_img_url: "cool_rating_url", deal: undefined, voters: [  ] });
     });
 
     it('should be able to add a business of type google', function () {
 
-        $scope.setSuggestionsGroup("google");
+        vm.setSuggestionsGroup("google");
 
         var business = {
             id: "CoolPlace",
@@ -112,8 +107,8 @@ describe("Main Controller", function() {
         };
         var type = "google";
 
-        $scope.addBusiness(business, type);
-        expect($scope.places).toContain({ name: 'CoolPlace', url: undefined, address: "CoolAddress", fromType: "google", rating: undefined, rating_img_url: "", deal: undefined, voters: [  ] });
+        vm.addBusiness(business, type);
+        expect(vm.places).toContain({ name: 'CoolPlace', url: undefined, address: "CoolAddress", fromType: "google", rating: undefined, rating_img_url: "", deal: undefined, voters: [  ] });
     });
 
 });
@@ -121,23 +116,21 @@ describe("Main Controller", function() {
 describe("Main Page Controller Server Calls", function() {
     beforeEach(module("app"));
     var createController,
+        $httpBackend,
         $scope,
-        $rootScope,
-        $httpBackend;
+        vm;
 
     beforeEach(inject(function ($injector) {
         $httpBackend = $injector.get('$httpBackend');
-        $rootScope = $injector.get('$rootScope');
-        $scope = $rootScope.$new();
         var $controller = $injector.get('$controller');
+        $scope = $injector.get('$rootScope');
+
 
         createController = function() {
             return $controller('MainController', {
-                '$scope': $scope,
-                '$rootScope': $rootScope
             });
         };
-        createController();
+        vm = createController();
     }));
 
     afterEach(function() {
@@ -146,7 +139,8 @@ describe("Main Page Controller Server Calls", function() {
     });
 
     it('should get the userName from the server and assign it.', function() {
-        createController();
+        vm = createController();
+
         $httpBackend.expect('GET', '/rest/user/')
             .respond({
                 firstName: "Kent",
@@ -156,11 +150,11 @@ describe("Main Page Controller Server Calls", function() {
         // have to use $apply to trigger the $digest which will
         // take care of the HTTP request
         $scope.$apply(function() {
-            $scope.getAuthenticatedUser();
+            vm.getAuthenticatedUser();
         });
         $httpBackend.flush(); //This is when it actually makes the call.
 
-        expect($scope.userName).toEqual('Kent');
+        expect(vm.userName).toEqual('Kent');
     });
 
     //xit('should put the group into the DB', function() {
@@ -178,19 +172,19 @@ describe("Main Page Controller Server Calls", function() {
     //});
     //
     it('should get Yelp business data from the passed in city.', function() {
-        $rootScope.location = "orem";
+        vm.location = "orem";
         $httpBackend.expect('GET', '/yelp/city/orem?deals=false&offset=0&yelpSortType=0')
             .respond({
                 businesses: ['Business1']
             });
 
         $scope.$apply(function() {
-            $scope.getYelpData('city', 0);
+            vm.getYelpData('city', 0);
         });
 
         $httpBackend.flush();
 
-        expect($scope.businessData).toEqual(['Business1']);
+        expect(vm.businessData).toEqual(['Business1']);
     });
 
 

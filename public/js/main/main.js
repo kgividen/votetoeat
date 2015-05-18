@@ -4,52 +4,55 @@
         .module('app')
         .controller('MainController', MainController);
 
-    MainController.$inject = ['$rootScope', '$filter', '$http', 'socket', 'growl'];
+    //TODO Figure our vm or $rootScope should be injected.
+    MainController.$inject = ['$filter', '$http', 'socket', 'growl'];
 
-    function MainController($scope, $filter, $http, socket, growl) {
-        $scope.users = [];
-        $scope.userName = '';
-        $scope.places = [];
-        $scope.placeName = "";
-        $scope.vote_max = 10;
-        $scope.voted = false;
-        $scope.showMainApp = false;
-        $scope.groupName = "";
-        $scope.voteBtnActive = 0;
-        $scope.businessData = [];
-        $scope.location = "";
-        $scope.suggestionTitle = "Suggestions";
-        $scope.currentSuggestionGroup = "yelp";
-        $scope.showSetUserName = false;
-        $scope.joinOrCreateBtn = "create";
-        $scope.dealsOnly = false;
-        $scope.yelpOffset = 0;
-        $scope.yelpSearchType = "cll";
-        $scope.yelpSortType = 0;
-        $scope.yelpNextDisabled = false;
-        $scope.googleSortType = 0;
-        $scope.showLoading = true;
-        $scope.user = {};
+    function MainController($filter, $http, socket, growl) {
+
+        var vm = this;
+        vm.users = [];
+        vm.userName = '';
+        vm.places = [];
+        vm.placeName = "";
+        vm.vote_max = 10;
+        vm.voted = false;
+        vm.showMainApp = false;
+        vm.groupName = "";
+        vm.voteBtnActive = 0;
+        vm.businessData = [];
+        vm.location = "";
+        vm.suggestionTitle = "Suggestions";
+        vm.currentSuggestionGroup = "yelp";
+        vm.showSetUserName = false;
+        vm.joinOrCreateBtn = "create";
+        vm.dealsOnly = false;
+        vm.yelpOffset = 0;
+        vm.yelpSearchType = "cll";
+        vm.yelpSortType = 0;
+        vm.yelpNextDisabled = false;
+        vm.googleSortType = 0;
+        vm.showLoading = true;
+        vm.user = {};
 
 
         //Get the logged in user from the server.
         // AUTHENTICATION REQUIRED
-        $scope.getAuthenticatedUser = function () {
+        vm.getAuthenticatedUser = function () {
             $http.get("/rest/user/").success(function (user) {
-                $scope.user = user;
-                $scope.userName = user.firstName;
+                vm.user = user;
+                vm.userName = user.firstName;
             }).error(function () {
                 growl.error("Something went wrong please try again.");
             });
         };
 
-        //$scope.runTest();
+        //vm.runTest();
 
-        $scope.createGroup = function () {
+        vm.createGroup = function () {
 
             //Get the logged in user from the server.
             //AUTHENTICATION REQUIRED
-            var groupName = encodeURIComponent($scope.groupName);
+            var groupName = encodeURIComponent(vm.groupName);
             $http.put("/rest/group/" + groupName).success(function (res) {
                 dump(JSON.stringify(res));
             }).error(function () {
@@ -60,7 +63,7 @@
 
             //Get groups and check for duplicate
             socket.emit('check_group_name', {
-                group: $scope.groupName
+                group: vm.groupName
             }, function (duplicate) {
                 if (duplicate) {
                     growl.error("Duplicate name please try again.", {
@@ -69,54 +72,54 @@
                         referenceId: "generalMessages"
                     });
                 } else {
-                    $scope.joinGroup();
+                    vm.joinGroup();
                 }
             });
         };
 
-        $scope.joinGroup = function () {
+        vm.joinGroup = function () {
             var nUser = {
-                "name": $scope.userName
+                "name": vm.userName
             };
 
             socket.emit('join_group', {
-                group: $scope.groupName,
+                group: vm.groupName,
                 user: nUser
             }, function (data) {
-                $scope.users = data.members;
-                $scope.places = data.places;
+                vm.users = data.members;
+                vm.places = data.places;
 
                 //update the totals of the votes since we just joined.
-                _.each($scope.places, function (place) {
+                _.each(vm.places, function (place) {
                     _updateVotesOnPlace(place);
                 })
             });
 
             //Tell the user it happened.
-            $scope.showMainApp = true;
+            vm.showMainApp = true;
 
             growl.success("Welcome!  Let's Vote To Eat!");
         };
 
-        $scope.addPlace = function () {
+        vm.addPlace = function () {
 
-            if (!$scope.placeName) return;  //make sure they've entered a place name.
+            if (!vm.placeName) return;  //make sure they've entered a place name.
             _addPlace({
-                "name": $scope.placeName
+                "name": vm.placeName
             });
 
             //clear input box
-            $scope.placeName = "";
+            //vm.placeName = "";
         };
 
-        $scope.voteForPlace = function (place, n) {
+        vm.voteForPlace = function (place, n) {
             //update the button group
             place["voteBtnActive"] = n;
 
             var newPlace = {
                 "name": place.name,
-                "group": $scope.groupName,
-                "voter": $scope.userName,
+                "group": vm.groupName,
+                "voter": vm.userName,
                 "vote": n
             };
 
@@ -126,14 +129,14 @@
             socket.emit('send:vote', newPlace);
         };
 
-        $scope.setSuggestionsGroup = function (group) {
-            $scope.businessData = [];
-            $scope.currentSuggestionGroup = group;
+        vm.setSuggestionsGroup = function (group) {
+            vm.businessData = [];
+            vm.currentSuggestionGroup = group;
         };
 
 
-        $scope.logout = function () {
-            socket.emit('disconnect', $scope.userName);
+        vm.logout = function () {
+            socket.emit('disconnect', vm.userName);
         };
 
         // Socket listeners
@@ -142,8 +145,8 @@
 
 
         socket.on('init', function (data) {
-//        $scope.name = data.name;
-//        $scope.users = data.users;
+//        vm.name = data.name;
+//        vm.users = data.users;
         });
 
         socket.on('send:message', function (message) {
@@ -153,7 +156,7 @@
         //When a new person comes from somewhere we need to add it to our list.
         socket.on('send:newUser', function (data) {
             //Add them to the list of people
-            $scope.users.push(data.user);
+            vm.users.push(data.user);
 
             // Notify everyone that a new person is here via a message to our messages model
             growl.info(data.user.name + " is now here!");
@@ -162,11 +165,11 @@
         //When a new place comes from somewhere we need to add it to our list.
         socket.on('send:newPlace', function (data) {
             //update the UI
-            $scope.places.push(data.place);
+            vm.places.push(data.place);
 
             // Notify everyone that a new person is here via a message to our messages model
             //TODO TEST THIS
-            growl.info("<b>" + data.place.name + "</b> was added as a place to eat by <b>" + $scope.userName + "</b>");
+            growl.info("<b>" + data.place.name + "</b> was added as a place to eat by <b>" + vm.userName + "</b>");
         });
 
         //When someone votes we need to update the total.
@@ -178,9 +181,9 @@
             if (!user.name) return;
             growl.warning(user.name + " has left.");
             //remove the user from the array
-            for (var i = 0; i < $scope.users.length; i++) {
-                if ($scope.users[i].name === user.name) {
-                    $scope.users.splice(i, 1);
+            for (var i = 0; i < vm.users.length; i++) {
+                if (vm.users[i].name === user.name) {
+                    vm.users.splice(i, 1);
                     break;
                 }
             }
@@ -191,11 +194,11 @@
             $('#inputGroupName').focus();
         });
 
-        $scope.addBusiness = function (business, type) {
+        vm.addBusiness = function (business, type) {
             var address = "";
             var rating_img_url = "";
 
-            if ($scope.currentSuggestionGroup == "yelp") {
+            if (vm.currentSuggestionGroup == "yelp") {
                 address = business.location.display_address.toString();
                 rating_img_url = business.rating_img_url;
             } else if (business.vicinity) {
@@ -237,68 +240,68 @@
 
         //TODO is there are way to angularize these modals so we don't need apply?
         $('#suggestionsModal').on('shown.bs.modal', function () {
-            if ($scope.currentSuggestionGroup == "yelp") {
-                $scope.$apply(function () {
-                    $scope.suggestionTitle = "Yelp Suggestions";
+            if (vm.currentSuggestionGroup == "yelp") {
+                vm.$apply(function () {
+                    vm.suggestionTitle = "Yelp Suggestions";
                 });
-                $scope.getYelpData($scope.yelpSearchType, $scope.yelpSortType);
+                vm.getYelpData(vm.yelpSearchType, vm.yelpSortType);
             } else {
-                $scope.$apply(function () {
-                    $scope.suggestionTitle = "Google Suggestions";
+                vm.$apply(function () {
+                    vm.suggestionTitle = "Google Suggestions";
                 });
                 _getGoogleData(0);
             }
         });
 
-        $scope.showModal = function () {
+        vm.showModal = function () {
             alert("closed");
         };
 
         //YELP calls
-        $scope.getMoreYelpData = function () {
-            $scope.yelpOffset = $scope.yelpOffset + 20;
-            if ($scope.yelpSortType != 0) $scope.yelpNextDisabled = true;
-            _getYelpData($scope.yelpSortType);
+        vm.getMoreYelpData = function () {
+            vm.yelpOffset = vm.yelpOffset + 20;
+            if (vm.yelpSortType != 0) vm.yelpNextDisabled = true;
+            _getYelpData(vm.yelpSortType);
         };
 
-        $scope.updateYelpSortData = function (s) {
-            $scope.businessData = [];
-            $scope.yelpOffset = 0;
+        vm.updateYelpSortData = function (s) {
+            vm.businessData = [];
+            vm.yelpOffset = 0;
             _getYelpData(s);
         };
 
 
-        $scope.getYelpData = function (searchType, yelpSortType) {
-            $scope.businessData = [];
-            $scope.yelpSearchType = searchType;
+        vm.getYelpData = function (searchType, yelpSortType) {
+            vm.businessData = [];
+            vm.yelpSearchType = searchType;
             _getYelpData(yelpSortType);
         };
 
-        $scope.updateYelpSortDataWithDeals = function () {
-            $scope.businessData = [];
-            $scope.dealsOnly = !$scope.dealsOnly;
+        vm.updateYelpSortDataWithDeals = function () {
+            vm.businessData = [];
+            vm.dealsOnly = !vm.dealsOnly;
             _getYelpData();
         };
 
         function _getYelpData(yelpSortType) {
-            $scope.showLoading = true;
+            vm.showLoading = true;
             if (yelpSortType != null) {
-                $scope.yelpSortType = yelpSortType;
+                vm.yelpSortType = yelpSortType;
             }
-            if ($scope.yelpSearchType == 'city') {
-                $http.get("/yelp/city/" + $scope.location + "?deals=" + $scope.dealsOnly + "&offset=" + $scope.yelpOffset + "&yelpSortType=" + $scope.yelpSortType).success(function (doc) {
-                    $scope.businessData = doc.businesses;
-                    $scope.showLoading = false;
+            if (vm.yelpSearchType == 'city') {
+                $http.get("/yelp/city/" + vm.location + "?deals=" + vm.dealsOnly + "&offset=" + vm.yelpOffset + "&yelpSortType=" + vm.yelpSortType).success(function (doc) {
+                    vm.businessData = doc.businesses;
+                    vm.showLoading = false;
                 });
             } else {
                 if (navigator.geolocation) {
                     navigator.geolocation.getCurrentPosition(function (position) {
-                        $scope.$apply(function () {
+                        vm.$apply(function () {
                             var cll = position.coords.latitude + "," + position.coords.longitude;
-                            $scope.location = cll;
-                            $http.get("/yelp/ll/" + cll + "?deals=" + $scope.dealsOnly + "&offset=" + $scope.yelpOffset + "&yelpSortType=" + $scope.yelpSortType).success(function (doc) {
-                                $scope.businessData.push.apply($scope.businessData, doc.businesses);
-                                $scope.showLoading = false;
+                            vm.location = cll;
+                            $http.get("/yelp/ll/" + cll + "?deals=" + vm.dealsOnly + "&offset=" + vm.yelpOffset + "&yelpSortType=" + vm.yelpSortType).success(function (doc) {
+                                vm.businessData.push.apply(vm.businessData, doc.businesses);
+                                vm.showLoading = false;
                             });
                         });
                     });
@@ -308,9 +311,9 @@
 
 
         //Google Local calls
-        $scope.updateGoogleSortData = function (googleSortType) {
-            $scope.showLoading = true;
-            $scope.googleSortType = googleSortType;
+        vm.updateGoogleSortData = function (googleSortType) {
+            vm.showLoading = true;
+            vm.googleSortType = googleSortType;
             _getGoogleData(googleSortType);
         };
 
@@ -336,9 +339,9 @@
                     var service = new google.maps.places.PlacesService(map);
                     service.nearbySearch(request, function (results, status, pagination) {
                         if (status == google.maps.places.PlacesServiceStatus.OK) {
-                            $scope.$apply(function () {
-                                $scope.businessData = results;
-                                $scope.showLoading = false;
+                            vm.$apply(function () {
+                                vm.businessData = results;
+                                vm.showLoading = false;
                             });
                             if (pagination.hasNextPage) {
                                 var moreButton = document.getElementById('nextBtn');
@@ -359,7 +362,7 @@
 //*******Internal functions*********
         function _addPlace(p) {
             //check for duplicates
-            if (_.findWhere($scope.places, {"name": p.name})) {
+            if (_.findWhere(vm.places, {"name": p.name})) {
                 growl.error("Cannot add a duplicate place!");
                 return "duplicate";
             }
@@ -375,23 +378,23 @@
             };
 
             //Update local UI
-            $scope.places.push(place);
+            vm.places.push(place);
 
             //send place to the other clients
             var newPlace = {
-                "group": $scope.groupName,
+                "group": vm.groupName,
                 "place": place
             };
             socket.emit('send:newPlace', newPlace);
 
-            growl.info("<b>" + place.name + "</b> was added as a place to eat by <b>" + $scope.userName + "</b>");
+            growl.info("<b>" + place.name + "</b> was added as a place to eat by <b>" + vm.userName + "</b>");
 
             return "added";
         }
 
         function _updateVotesOnPlace(place){
             //get the correct place from the scope based on the name.
-            var currentPlace = _.find($scope.places, function(p){
+            var currentPlace = _.find(vm.places, function(p){
                 return p.name == place.name;
             });
             var voter = _.findWhere(currentPlace.voters, {"name" : place.voter});
@@ -422,12 +425,12 @@
                 growl.info(currentPlace.name + " received " + place.vote + " votes by " + place.voter + "!");
             }
             //remove all the winnings
-            $scope.places = _.map($scope.places, function(o) {
+            vm.places = _.map(vm.places, function(o) {
                 return _.omit(o, 'winning');
             });
 
             //update the color for the winning place
-            var winningPlace = _.max($scope.places, function(place){
+            var winningPlace = _.max(vm.places, function(place){
                 return place.totalVotes;
             });
             winningPlace.winning = true;
@@ -437,7 +440,7 @@
         //Utility functions
         // ================
 
-        $scope.getNumber = function(num) {
+        vm.getNumber = function(num) {
             return new Array(num);
         };
     }
