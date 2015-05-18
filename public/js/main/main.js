@@ -96,7 +96,7 @@
             //Tell the user it happened.
             vm.showMainApp = true;
 
-            growl.success("Welcome!  Let's Vote To Eat!");
+            growl.success("Welcome! Vote To Eat!");
         };
 
         vm.addPlace = function () {

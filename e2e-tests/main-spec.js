@@ -6,6 +6,24 @@
 //*******************NOTES*******************
 
 
+function createGroup() {
+    browser.get('/main');
+
+    element(by.id('createGroupBtn')).click();
+
+    var groupNameElement = element(by.model('vm.groupName'));
+    expect(groupNameElement.isPresent()).toBeTruthy();
+
+    var EC = protractor.ExpectedConditions;
+    browser.wait(EC.visibilityOf(groupNameElement), 10000, "groupNameElement not present");
+
+    groupNameElement.sendKeys('testGroup');
+
+    element(by.id('createGroupSubmitBtn')).click();
+}
+
+
+
 describe('Main Page', function() {
     it('should display welcome message with the first name', function () {
         browser.get('/main');
@@ -24,14 +42,42 @@ describe('Main Page', function() {
     });
 
     it('should open create group modal when create group button is clicked', function () {
-        element.all(by.css('.btn')).then(function(elements) {
-            var createGroup = elements[0];
-            createGroup.click();
-            expect(element(by.model('groupName')).isPresent()).toBe(true);
+        createGroup();
+        var expectedDiv = element(by.css('.growl-message'));
 
-        });
+        var EC = protractor.ExpectedConditions;
+        browser.wait(EC.presenceOf(expectedDiv), 5000, "No alert present");
+        expect((expectedDiv).getText()).toBe("Welcome! Vote To Eat!");
     })
 });
+
+
+describe('Open Google Suggestions', function() {
+    it('should have a title and have places to add', function () {
+        createGroup();
+
+        var EC = protractor.ExpectedConditions;
+        var googleSuggestionsBtn = element(by.id('googleSuggestionsBtn'));
+        browser.wait(EC.visibilityOf(googleSuggestionsBtn), 5000, "No googleSuggestionsBtn present");
+        expect(googleSuggestionsBtn.isPresent()).toBeTruthy();
+        googleSuggestionsBtn.click();
+
+        var suggestionTitle = element(by.binding('vm.suggestionTitle'));
+
+        //Need to EC it because when we load we need to wait for the model to update
+        browser.wait(EC.textToBePresentInElement(suggestionTitle,"Google Suggestions"), 5000, "No suggestionTitle present");
+        expect((suggestionTitle).getText()).toBe("Google Suggestions");
+
+        var loadingLabel = element(by.id('loadingLabel'));
+        browser.wait(EC.invisibilityOf(loadingLabel), 10000, "loadingLabel is visible");
+
+        var suggestions = element.all(by.repeater('business in vm.businessData'));
+        var blah = suggestions.count();
+        expect(suggestions.count()).toBeGreaterThan(0);
+    });
+});
+
+
 
 //NOTE: This would test the index page but we are auto logging in via the protractor.conf.js so this doesn't work.
 //describe('VoteToEat Index Page', function() {

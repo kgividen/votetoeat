@@ -7,6 +7,7 @@ exports.config = {
 
     capabilities: {
         'browserName': 'chrome'
+        //'browserName': 'phantomjs'
     },
 
     //WARNING: You cannot debug if you are running multiple browser instances.

@@ -1,4 +1,6 @@
 <div growl reference="generalMessages"></div>
+<div id="map"></div>
+
 <div class="row">
     <h1 class="pull-left">Hello {{vm.userName}}!</h1>
 </div>
@@ -6,7 +8,7 @@
     <div class="row">
         <h4 class="lead">Create a group or join a group so you add places and figure out where to eat.</h4>
     </div>
-    <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#createGroupModal">Create Group &raquo;</button>
+    <button id="createGroupBtn" type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#createGroupModal">Create Group &raquo;</button>
     <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#joinGroupModal">Join Group &raquo;</button>
 </div>
 <div id="main_app" class="container" ng-init="vm.getAuthenticatedUser()" ng-cloak ng-show="vm.showMainApp">
@@ -23,7 +25,7 @@
                 </div>
                 <button type="submit" title="Add Place" class="btn btn-primary" ng-click="vm.addPlace()">Add</button>
                 <button class="btn btn-link" data-toggle="modal" data-target="#suggestionsModal" ng-click="vm.setSuggestionsGroup('yelp')">Yelp Suggestions</button>
-                <button class="btn btn-link" data-toggle="modal" data-target="#suggestionsModal" ng-click="vm.setSuggestionsGroup('google')">Google Suggestions</button>
+                <button id="googleSuggestionsBtn" class="btn btn-link" data-toggle="modal" data-target="#suggestionsModal" ng-click="vm.setSuggestionsGroup('google')">Google Suggestions</button>
             </form>
             <div class="col-md-12" ng-class="{true: 'well'}[vm.places.length > 0]">
                 <div class="row" ng-repeat="place in vm.places">
@@ -99,7 +101,7 @@
                     <label for="createGroupName">Group Name</label>
                     <input type="text" class="form-control" id="createGroupName" placeholder="Group Name" ng-model="vm.groupName">
                 </div>
-                <button type="submit" data-dismiss="modal" class="btn btn-primary" ng-click="vm.createGroup()">Create Group</button>
+                <button id="createGroupSubmitBtn" type="submit" data-dismiss="modal" class="btn btn-primary" ng-click="vm.createGroup()">Create Group</button>
             </div>
         </div>
     </div>
@@ -176,7 +178,7 @@
                                     <small ng-repeat="address in business.location.display_address">{{address}} </small>
                                 </a>
                             </div>
-                            <div ng-show="vmcurrentSuggestionGroup == 'google'">
+                            <div ng-show="vm.currentSuggestionGroup == 'google'">
                                 <button class="btn btn-link" title="Add Place" ng-click="vm.addBusiness(business,'google')">{{business.name}}</button>
                                 <a target="_blank" ng-href="http://google.com/local?q={{business.name}},{{business.vicinity}}">
                                     <img src="images/img_trans.gif" class="googleLogoSmall" title="Open in Google" alt="google">
@@ -190,7 +192,7 @@
                             </div>
                         </div>
                         <div>
-                            <span ng-show="vm.showLoading === true">Loading . . .</span>
+                            <span id="loadingLabel" ng-show="vm.showLoading === true">Loading . . .</span>
                         </div>
                         <button class="btn btn-primary pull-right" ng-show="vm.businessData.length > 0 && vm.currentSuggestionGroup == 'yelp'" ng-disabled="vm.yelpNextDisabled" ng-click="vm.getMoreYelpData()">Next 20</button>
                         <button id="nextBtn" class="btn btn-primary pull-right" ng-show="vm.businessData.length > 0 && vm.currentSuggestionGroup == 'google'">Next Page</button>
