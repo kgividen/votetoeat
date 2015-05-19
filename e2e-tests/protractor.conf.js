@@ -2,12 +2,12 @@ exports.config = {
     allScriptsTimeout: 11000,
 
     specs: [
-        '*.js'
+        //'*.js'
+        'main-spec.js'
     ],
 
     capabilities: {
         'browserName': 'chrome'
-        //'browserName': 'phantomjs'
     },
 
     //WARNING: You cannot debug if you are running multiple browser instances.
@@ -18,6 +18,20 @@ exports.config = {
     //}],
 
     baseUrl: 'http://localhost:3000',
+
+    login: function () {
+        browser.driver.get('http://localhost:3000');
+        browser.driver.findElement(by.id('email')).sendKeys('register@gividen.com');
+        browser.driver.findElement(by.id('password')).sendKeys('xabler');
+        browser.driver.findElement(by.id('submit-login')).click();
+
+        return browser.driver.wait(function() {
+            return browser.driver.getCurrentUrl().then(function(url) {
+                return /main/.test(url);
+            });
+        }, 8000);
+
+    },
 
     //This logs a user in each time before running the tests.
     onPrepare: function () {

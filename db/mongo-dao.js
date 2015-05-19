@@ -19,11 +19,34 @@ exports.addGroup = function(group, next) {
     });
 };
 
+exports.findGroup = function (group, next){
+    db.groups.find({name: group.name}).toArray(function(err, items){
+        console.log("items: " + JSON.stringify(items));
+        //If groups doesn't exist then add them
+        if (items[0]){
+            next(err, items[0]);
+        } else {
+            next("Group doesn't exist");
+        }
+    });
+} ;
+
+exports.removeGroup = function(user, next) {
+    db.groups.remove({email: user.email}, function(err){
+        next(err);
+    });
+};
+
+
 
 //USERS
 exports.findUser = function(user, next) {
     db.users.find({email: user.email}).toArray(function(err, items){
-        next(err, items[0]);
+        if(items[0]){
+            next(err, items[0]);
+        } else {
+            next("User not found");  //probably should throw a 404 or something here.
+        }
     });
 };
 
@@ -37,6 +60,12 @@ exports.addUser = function(user, next) {
                 next(err, results);
             });
         }
+    });
+};
+
+exports.removeUser = function(user, next) {
+    db.users.remove({email: user.email}, function(err){
+        next(err);
     });
 };
 

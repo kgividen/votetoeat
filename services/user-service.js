@@ -2,7 +2,9 @@ var db = require('../db/mongo-dao.js');
 var bcrypt = require('bcrypt');
 
 exports.addUser = function(user, next) {
-    bcrypt.hash(user.password, 10, function(err, hash) {
+    if (user.pwd1 != user.pwd2) return "Passwords don't match";
+
+    bcrypt.hash(user.pwd1, 10, function(err, hash) {
         if (err) {
             return next(err);
         }

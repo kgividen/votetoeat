@@ -17,11 +17,31 @@
         </div>
         <div class="form-group">
             <label for="password">Password</label>
-            <input type="password" id="password" name="password" autocomplete="off" required />
+            <input type="password" id="password" autocomplete="off" required name="pwd1" />
+        </div>
+        <div class="form-group">
+            <label for="password">Confirm Password</label>
+            <input type="password" id="confirmPassword" autocomplete="off" required name="pwd2" />
         </div>
         <div class="form-submit">
-            <input type="submit" value="Create my account" />
+            <input id="createAccountBtn" type="submit" value="Create my account" />
         </div>
-        <span style="color:red">{{error}}</span>
+        <span id="error" style="color:red">{{error}}</span>
     </form>
 </div>
+
+<script type="text/javascript">
+    document.addEventListener("DOMContentLoaded", function() {
+        var checkForm = function(e) {
+            if(this.pwd1.value == "" || this.pwd1.value !== this.pwd2.value) {
+                alert("Error: Please check that you've entered and confirmed your password!");
+                this.pwd1.focus();
+                e.preventDefault();
+                return;
+            }
+            alert("Both username and password are VALID!");
+        };
+
+        var myForm = document.getElementById("create-user-form");
+        myForm.addEventListener("submit", checkForm, true);
+</script>

@@ -25,7 +25,7 @@ module.exports = function(config) {
         'public/js/app.js',
         'public/js/route-config.js',
         'public/js/main/*.js',
-        'unit-tests/' + '*.js'
+        'karma-unit-tests/' + '*.js'
     ],
 
 
