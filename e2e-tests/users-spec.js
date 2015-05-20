@@ -15,25 +15,37 @@ describe('Creating an account', function() {
         "email": "fake@gividen.com",
         "password": "netsmart"
     };
-    db.removeUser({email: fakeUser.email}, function(err){
-        console.log(err);
-    });
-    it('should add the user to the db and log them in', function () {
-        //browser.driver.get('http://localhost:3000/users/create');
-        //browser.driver.findElement(by.id('firstName')).sendKeys(fakeUser.firstName);
-        //browser.driver.findElement(by.id('lastName')).sendKeys(fakeUser.lastName);
-        //browser.driver.findElement(by.id('email')).sendKeys(fakeUser.email);
-        //browser.driver.findElement(by.id('password')).sendKeys(fakeUser.password);
-        //browser.driver.findElement(by.id('confirmPassword')).sendKeys(fakeUser.password);
-        //browser.driver.findElement(by.id('createAccountBtn')).click();
-        db.findUser({email: fakeUser.email}, function(err, user){
-            if (err) {
-                return err;
-            }
 
-            console.log(user);
-            expect(user.email).toEqual(fakeUser.email);
+    beforeEach(function(done) {
+        //cleanup fake user
+        db.removeUser(fakeUser, function (err, data) {
+            if (err) console.log(err);
+            done();
+
         });
+
+    }, 5000);
+
+    it('should add the user to the db and log them in', function (done) {
+        browser.driver.get('http://localhost:3000/users/create');
+        browser.driver.findElement(by.id('firstName')).sendKeys(fakeUser.firstName);
+        browser.driver.findElement(by.id('lastName')).sendKeys(fakeUser.lastName);
+        browser.driver.findElement(by.id('email')).sendKeys(fakeUser.email);
+        browser.driver.findElement(by.id('password')).sendKeys(fakeUser.password);
+        browser.driver.findElement(by.id('confirmPassword')).sendKeys(fakeUser.password);
+        browser.driver.findElement(by.id('createAccountBtn')).click().then(function() {
+                db.findUser(fakeUser, function (err, user) {
+                    expect(user).toBeTruthy();
+                    var returnedUser = user;
+                    expect(returnedUser.email).toEqual(fakeUser.email);
+                    expect(returnedUser.firstName).toEqual(fakeUser.firstName);
+                    expect(returnedUser.lastName).toEqual(fakeUser.lastName);
+                    done();
+                });
+            }
+        );
+
+
         //expect(browser.driver.getTitle()).toEqual('Main - Vote To Eat');
     });
 
