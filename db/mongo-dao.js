@@ -1,88 +1,294 @@
-var mongoskin = require('mongoskin');
-var config = require('../config');
-
-var db = mongoskin.db(config.mongoUri, {safe:true});
-db.bind('groups');
-db.bind('users');
+var tingo = require('tingodb')();
+var db = new tingo.Db('mongoDBFiles', {});
+var groupCollection = "groups";
+var placesCollection = "places";
+var membersCollection = "members";
+var chatCollection = "chatSessions";
+var _ = require('underscore');
 
 //GROUPS
 exports.addGroup = function(group, next) {
-    db.groups.find({name: group.name}).toArray(function(err, items){
-        //If groups doesn't exist then add them
-        if(items[0]){
-            next("Group already exists");  //probably should throw a 404 or something here.
+    group.name = group.name.toUpperCase();
+    db.collection(groupCollection).findOne({name: group.name},function(err, foundGroup){
+        if (err) {
+            next && next(err, null);
+        }
+        if(foundGroup){
+            var results = "GroupExists";
+            next && next(err,results);
         } else {
-            db.groups.insert(group, {}, function (err, results) {
-                next(err, results);
+            group.members=[];
+            group.places=[];
+            db.collection(groupCollection).insert(group, {}, function (err, results) {
+                next && next(err, results);
             });
         }
     });
 };
 
-exports.findGroup = function (group, next){
-    db.groups.find({name: group.name}).toArray(function(err, items){
-        console.log("items: " + JSON.stringify(items));
-        //If groups doesn't exist then add them
-        if (items[0]){
-            next(err, items[0]);
-        } else {
-            next("Group doesn't exist");
+exports.updateGroup = function (group, next) {
+    group.name = group.name.toUpperCase();
+    db.collection(groupCollection).update({name: group.name}, group, {upsert: true},
+        function (err, object) {
+            if (err) {
+                console.warn(err.message);
+                next && next(err, null);
+            }
+            next && next(err, object);
         }
-    });
-} ;
+    );
+};
 
-exports.removeGroup = function(user, next) {
-    db.groups.remove({email: user.email}, function(err){
-        next(err);
+exports.findGroup = function(name, next) {
+    name = name.toUpperCase();
+    db.collection(groupCollection).findOne({name: name},function(err, group){
+        if (err) {
+            next && next(err, null);
+        }
+        next && next(err, group);
+    });
+};
+
+var _removeGroup = function(name, next) {
+    name = name.toUpperCase();
+    db.collection(groupCollection).remove({name: name}, function(err){
+        next && next(err);
+    });
+};
+
+exports.removeGroup = _removeGroup;
+
+//PLACES
+exports.addUpdatePlace = function (place, next) {
+    db.collection(placesCollection).update({name: place.name, group:place.group}, place, {upsert: true},
+        function (err, object) {
+            if (err) {
+                console.warn(err.message);
+                next && next(err, null);
+            }
+            next && next(err, object);
+        }
+    );
+};
+
+exports.removePlace = function(name, next) {
+    db.collection(placesCollection).remove({name: name}, function(err){
+        next && next(err);
     });
 };
 
 
+var _removePlacesByGroup = function(groupName, next) {
+    db.collection(placesCollection).remove({group:groupName}, function(err){
+        next && next(err);
+    });
+};
+
+exports.removePlacesByGroup = _removePlacesByGroup;
+
+exports.findPlace = function(place, next) {
+    db.collection(placesCollection).findOne({name: place.name, group:place.group},function(err, found){
+        if (err) {
+            next && next(err, null);
+        }
+        next && next(err, found);
+    });
+};
+
+
+var _findPlacesByGroup = function (groupName, next) {
+    db.collection(placesCollection).find({group: groupName}).toArray(function (err, places) {
+        if (err) {
+            console.warn(err.message);
+            next && next(err, null);
+        }
+        next && next(err, places);
+    });
+};
+
+exports.findPlacesByGroup = _findPlacesByGroup;
+
+//Chat session
+exports.addUpdateChat = function (msg, next) {
+    db.collection(chatCollection).insert(msg, {},
+        function (err, object) {
+            if (err) {
+                console.warn(err.message);
+                next && next(err, null);
+            }
+            next && next(err, object);
+        }
+    );
+};
+
+var _removeChatByGroup = function(groupName, next) {
+    db.collection(chatCollection).remove({group: groupName}, function(err){
+        next && next(err);
+    });
+};
+
+exports.removeChatByGroup = _removeChatByGroup;
+
+var _findChatsByGroup = function(groupName, next) {
+    db.collection(chatCollection).find({group:groupName}).toArray(function(err, found){
+        if (err) {
+            next && next(err, null);
+        }
+        next && next(err, found);
+    });
+};
+
+exports.findChatsByGroup = _findChatsByGroup;
+
+//Group Members
+exports.addUpdateMember = function (member, next) {
+    db.collection(membersCollection).update({name: member.name, group:member.group}, member, {upsert: true},
+        function (err, object) {
+            if (err) {
+                console.warn(err.message);
+                next && next(err, null);
+            }
+            next && next(err, object);
+        }
+    );
+};
+
+exports.removeMember = function(member, next) {
+    db.collection(membersCollection).remove({name: member.name, group:member.group}, function(err){
+        next && next(err);
+    });
+};
+
+exports.findMember = function(member, next) {
+    db.collection(membersCollection).findOne({name: member.name, group:member.group},function(err, found){
+        if (err) {
+            next && next(err, null);
+        }
+        next && next(err, found);
+    });
+};
+
+var _removeMembersByGroup = function(groupName, next) {
+    db.collection(membersCollection).remove({group: groupName}, function(err){
+        next && next(err);
+    });
+};
+
+exports.removeMembersByGroup = _removeMembersByGroup;
+
+
+var _findMembersByGroup = function (groupName, next) {
+    db.collection(membersCollection).find({group: groupName}).toArray(function (err, members) {
+        if (err) {
+            console.warn(err.message);
+            next && next(err, null);
+        }
+        next && next(err, members);
+    });
+};
+
+exports.findMembersByGroup = _findMembersByGroup;
+
 
 //USERS
-exports.findUser = function(user, next) {
-    db.users.find({email: user.email}).toArray(function(err, items){
-        if(items[0]){
-            next(err, items[0]);
+exports.findUser = function(name, next) {
+    db.collection("users").findOne({name: name},function(err, user){
+        if (err) {
+            next && next(err, null);
+        }
+        if(user){
+            next && next(err, user);
         } else {
-            next("User not found");  //probably should throw a 404 or something here.
+            next && next({message:"User not found"});
         }
     });
 };
 
 exports.addUser = function(user, next) {
-    db.users.find({email: user.email}).toArray(function(err, items){
-        //If groups doesn't exist then add them
-        if(items[0]){
-            next("User already exists");  //probably should throw a 404 or something here.
+    db.collection("users").findOne({name: user.name},function(err, foundUser){
+        if (err) {
+            next && next(err, null);
+        }
+        //If user doesn't exist then add them
+        if(foundUser){
+            next && next({message:"Duplicate User Found"});
         } else {
-            db.users.insert(user, {}, function (err, results) {
-                next(err, results);
+            db.collection("users").insert(user, {}, function (err, results) {
+                next && next(err, results);
             });
         }
     });
 };
 
-exports.removeUser = function(user, next) {
-    db.users.remove({email: user.email}, function(err){
-        next(err);
+exports.removeUser = function(name, next) {
+    db.collection("users").remove({name: name}, function(err){
+        next && next(err);
     });
 };
 
+//COMBINED DATA FUNCTIONS
+exports.findGroupAndAllAttrs  = function (groupName, next) {
+    db.collection(groupCollection).findOne({name: groupName},function(err, group){
+        if (err) {
+            next && next(err, null);
+        }
+        _findPlacesByGroup(groupName, function(err, groupPlaces){
+            if (err) {
+                next && next(err, null);
+            }
+            _findMembersByGroup(groupName, function(err, groupMembers){
+                if (err) {
+                    next && next(err, null);
+                }
+                _findChatsByGroup(groupName, function(err, chatSession) {
+                    if (err) {
+                        next && next(err, null);
+                    }
+                    _.each(groupMembers, function (m) {
+                        delete m.group
+                    });  //remove them cause they're dups
+                    _.each(groupPlaces, function (p) {
+                        delete p.group
+                    });
+                    _.each(chatSession, function (c) {
+                        delete c.group
+                    });
 
-//FUTURE TODO SECTION
+                    //Combine places and members into one object
+                    var groupCombined = {
+                        name: groupName,
+                        places: groupPlaces,
+                        members: groupMembers,
+                        chatSession: chatSession
+                    };
 
-//editing an existing snippet
-//update one snippet and return 204 NO CONTENT
-//patch /sss/idm/:id
-//db.idm.update({_id=":id"}, json);
+                    next && next(err, groupCombined);
+                });
+            });
+        })
+    });
+};
 
-//2 ops for collections
-//create new blank list of snippets and return 201 CREATED
-//put /sss/foo
-//db.createCollection("foo");
-
-//delete foo list of snippets and return 204 NO CONTENT
-//delete /sss/foo
-//db.foo.remove();
-
+exports.removeGroupAndAllAttrs = function (groupName, next) {
+    _removeGroup(groupName, function(err, result){
+        if(err){
+            console.log("error removing group:" + err);
+        }
+        _removePlacesByGroup(groupName, function(err){
+            if(err){
+                console.log("error removing placesByGroup:" + err);
+            }
+            _removeChatByGroup(groupName, function(err){
+                if(err){
+                    console.log("error removing chatsByGroup:" + err);
+                }
+                _removeMembersByGroup(groupName, function(err) {
+                    if (err) {
+                        console.log("error removing membersByGroup:" + err);
+                    }
+                    next && next(err);
+                });
+            })
+        });
+    })
+}

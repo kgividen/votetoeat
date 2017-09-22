@@ -1,156 +1,104 @@
 var _ = require('underscore');
-
-//[
-//    {
-//        "name": "group1",
-//        "members":[{
-//            "name":"c1"
-//        },{
-//            "name":"f1"
-//        }],
-//        "places":[{
-//            "name":"Cafe Rio",
-//            "voters": [
-//                {
-//                    "name" : "c1",
-//                    "vote" : 10
-//                },
-//                {
-//                    "name" : "f1",
-//                    "vote" : 5
-//                }
-//            ]
-//        }]
-//    },
-//    {
-//        "name": "group2",
-//        "members":[{
-//            "name":"c1"
-//        },{
-//            "name":"f1"
-//        }],
-//        "places":[{
-//            "name":"Culvers",
-//            "voters": [
-//                {
-//                    "name" : "c1",
-//                    "vote" : 2
-//                },
-//                {
-//                    "name" : "f1",
-//                    "vote" : 10
-//                }
-//            ]
-//        }]
-//    }
-//]
-var groups = [];
+var db = require('./db/mongo-dao');
 
 // export function for listening to the socket
 module.exports = function (socket) {
-    socket.on('join_group', function(data, callback) {
+    socket.on('join_group', function(data, next) {
+        if (!data.group) return;
         var groupName = data.group.toUpperCase();
         socket.join(groupName);
-        socket.user_group = groupName;
-        socket.user_name = data.user.name;
+        //Todo we probably want to use socket.set and socket.get
+        socket.user_group = groupName;  //We mainly need this for the disconnect
+        socket.user_name = data.name;
 
-        //Todo we probably want to move all this group array logic out to a database with some rest calls instead of handling it with socket.io and keeping it in memory
+        //Add user to the group then emit it so the others know
+        var addMember = function (){
+            db.addUpdateMember(data, function(){
+                //emit user out to everyone user
+                socket.in(groupName).emit('send:newUser', data);
+                db.findGroupAndAllAttrs(data.group, function(err, found){
+                    if(err) return;
+                    next && next(found);
+                });
+            })
+        };
+        
+        
+        //Create group if it doesn't exist then add this member
+        db.findGroup(groupName, function(err, group){
+            if(err) return;
 
-        //Find out if group exists add this user as a member then emit the new array.
-        var groupInArray = _.findWhere(groups,{"name": groupName});
-        if(groupInArray){
-            groupInArray.members.push(data.user);
-            //socket.in(groupName).emit('send:updateGroup', groupInArray);
-            socket.in(groupName).emit('send:newUser', data);
-            if (callback) {
-                callback(groupInArray);
+            //create group if it doesn't exist.
+            if(!group) {
+                var group = {
+                    name: groupName
+                };
+                db.addGroup(group, function(){
+                    addMember();
+                })
+            } else {
+                addMember();
             }
-        // If not then add it to groups array and then add user as a member.
-        // We don't need to emit in this case cause it's a new group created by that user
-        } else {
-            //new group
-            var group = {
-                "name": groupName
-            };
-            group.members = [];
-            group.places = [];
-            group.members.push(data.user);
-            groups.push(group);
-            if (callback) {
-                callback(group);
-            }
-        }
+        })
+        
     });
 
     // broadcast a user's message to other users
-    socket.on('send:message', function (data) {
-        socket.in(data.group.toUpperCase()).emit('send:message', {
-            user: name,
-            text: data.message
+    socket.on('send:message', function (data, next) {
+        if (!data.group) return;
+        var msg = {
+            username: data.username,
+            text: data.text,
+            type: data.type,
+            group: data.group,
+            timestamp: data.timestamp
+        };
+        socket.in(data.group.toUpperCase()).emit('send:message', msg);
+        db.addUpdateChat(msg, function(){
+            next && next(msg);
         });
     });
 
-    // broadcast a user has been added to other users
-    socket.on('send:updateGroup', function (data) {
-        socket.in(data.group.toUpperCase()).emit('send:updateGroup', data);
-        socket.user_name = data.name;
-    });
-
-    socket.on('send:newUser', function (data) {
-        socket.in(data.group.toUpperCase()).emit('send:newUser', data);
-        socket.user_name = data.user.name;
-    });
-
-    socket.on('user:left', function (data) {
-        socket.in(data.group.toUpperCase()).emit('user:left', data);
+    // broadcast a place has been added to other users
+    socket.on('send:newPlace', function (place, next) {
+        if (!place) return;
+        db.addUpdatePlace(place, function(){
+            socket.in(place.group).emit('send:newPlace', place);
+            next && next();
+        });
     });
 
     // broadcast a place has been added to other users
-    socket.on('send:newPlace', function (data) {
-        var groupName = data.group.toUpperCase();
-        //add new place to group
-        var group = _.findWhere(groups,{"name": groupName});
-        if(group){
-            group.places.push(data.place);
-            socket.in(groupName).emit('send:newPlace', data);
-        }
-    });
-
-    // broadcast a place has been added to other users
-    socket.on('send:vote', function (data) {
+    socket.on('send:vote', function (data, next) {
+        if (!data.group) return;
         var groupName = data.group.toUpperCase();
         socket.in(groupName).emit('send:vote', data);
-        var groupArray = _.find(groups, function(group){
-            return group.name == groupName;
+
+        //find the places that's receiving the vote
+        ///update the places for this group with the vote that just came in
+
+        db.findPlace(data, function(err, place){
+            if (err) return;
+
+            //Modify the vote but if we're the first voter we need to add them
+            var voter = _.findWhere(place.voters, {"name":data.voter});
+            if(voter) {
+                //modify voters votes
+                voter.vote = data.vote;
+            } else {
+                //add voters votes
+                var obj = {
+                    "name" : data.voter,
+                    "vote" : data.vote
+                };
+                place.voters.push(obj);
+            }
+            db.addUpdatePlace(place, function(err){
+                if (err) console.log("err updating vote on place");
+                next && next();
+            })
         });
-
-        //update the place with the votes
-        var place = _.find(groupArray.places, function(place){
-            return place.name == data.name;
-        });
-
-        //Modify the vote but if we're the first voter we need to add them
-        var voter = _.findWhere(place.voters, {"name":data.voter});
-        if(voter) {
-            //modify voters votes
-            voter.vote = data.vote;
-        } else {
-            //add voters votes
-            var obj = {
-                "name" : data.voter,
-                "vote" : data.vote
-            };
-            place.voters.push(obj);
-        }
     });
-
-    socket.on('check_group_name', function(data, callback) {
-        //Find out if group exists add this user as a member then emit the new array.
-        if (callback) {
-            callback(_.findWhere(groups,{"name": data.group.toUpperCase()}));
-        }
-    });
-
 
     // clean up when a user leaves, and broadcast it to other users
     socket.on('disconnect', function (data) {
@@ -163,18 +111,30 @@ module.exports = function (socket) {
             name: socket.user_name
         });
 
-        //remove the exiting person from the group list.
-        var groupArray = _.find(groups, function(group){
-            return group.name == socket.user_group;
-        });
-        var idx = _.findIndex(groupArray.members, {name: socket.user_name})
-        groupArray.members.splice(idx, 1); //remove member from array
+        var msg = {
+            type: "system",
+            username: "",
+            timestamp: new Date(),
+            text: socket.user_name + " has left.",
+            group:socket.user_group
+        };
+        socket.in(socket.user_group).emit('send:message', msg);
 
-        //If Group members is 0 remove the group from memory
-        if(groupArray.members.length == 0){
-            var gIdx = _.findIndex(groups, {name: socket.user_group});
-            groups.splice(gIdx,1); //remove group from array
-        }
+        //We have to update the chat manually because this is a system event and doesn't get saved on the send:message socket.on above.
+        db.addUpdateChat(msg);
+
+        //remove the existing person from mongo and see if he was the last one.  If so remove group from db.
+        db.removeMember({name: socket.user_name, group:socket.user_group}, function(){
+            db.findMembersByGroup(socket.user_group, function(err, members){
+                if(!members || members.length <= 0){
+                    db.removeGroupAndAllAttrs(socket.user_group, function(err, result){
+                        if(err){
+                            console.log("error removing group and attrs:" + err);
+                        }
+                    })
+                }
+            })
+        });
 
     });
 };

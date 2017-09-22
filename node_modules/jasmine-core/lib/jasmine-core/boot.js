@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2008-2015 Pivotal Labs
+Copyright (c) 2008-2017 Pivotal Labs
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
@@ -71,11 +71,21 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     getWindowLocation: function() { return window.location; }
   });
 
+  var filterSpecs = !!queryString.getParam("spec");
+
   var catchingExceptions = queryString.getParam("catch");
   env.catchExceptions(typeof catchingExceptions === "undefined" ? true : catchingExceptions);
 
   var throwingExpectationFailures = queryString.getParam("throwFailures");
   env.throwOnExpectationFailure(throwingExpectationFailures);
+
+  var random = queryString.getParam("random");
+  env.randomizeTests(random);
+
+  var seed = queryString.getParam("seed");
+  if (seed) {
+    env.seed(seed);
+  }
 
   /**
    * ## Reporters
@@ -85,11 +95,13 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     env: env,
     onRaiseExceptionsClick: function() { queryString.navigateWithNewParam("catch", !env.catchingExceptions()); },
     onThrowExpectationsClick: function() { queryString.navigateWithNewParam("throwFailures", !env.throwingExpectationFailures()); },
+    onRandomClick: function() { queryString.navigateWithNewParam("random", !env.randomTests()); },
     addToExistingQueryString: function(key, value) { return queryString.fullStringWithNewParam(key, value); },
     getContainer: function() { return document.body; },
     createElement: function() { return document.createElement.apply(document, arguments); },
     createTextNode: function() { return document.createTextNode.apply(document, arguments); },
-    timer: new jasmine.Timer()
+    timer: new jasmine.Timer(),
+    filterSpecs: filterSpecs
   });
 
   /**

@@ -1,14 +1,55 @@
-var express = require('express');
-var router = express.Router();
-var restrict = require('../auth/restrict');
+// Routes starting with "/"
+module.exports = function (app, passport) {
+    var express = require('express');
+    var main_routes = express.Router();
+    // var restrict = require('../auth/restrict');
+    // var db = require('../db/mongo-dao');
 
-router.get('/', restrict, function(req, res, next) {
-//router.get('/', function(req, res, next) {
-    var vm = {
-        title: 'Main',
-        firstName: req.user ? req.user.firstName : null
-    };
-    res.render('main/index', vm);
-});
+    main_routes.get('/',
+        function (req, res) {
+            var vm = {
+                title: 'Vote To Eat',
+                // user: req.user,
+                // error: req.flash('error'),
+                // isAuthenticated: req.isAuthenticated()
+            };
+            res.render('layout', vm);
+        }
+    );
+    main_routes.get('/ping',    // a convenience test route
+        // restrict,
+        function (req, res) {
+            res.status(200).send("pong!");
+        });
+    // main_routes.get('/auth/github',
+    //     passport.authenticate('github'));
+    // main_routes.get('/auth/github/callback',
+    //     passport.authenticate('github', {
+    //             successReturnToOrRedirect: '/',
+    //             failureRedirect: '/#/login',
+    //             failureFlash: 'Invalid credentials'
+    //         }
+    //     ));
+    // main_routes.get('/auth/google',
+    //     passport.authenticate('google', {scope: ['profile', 'email']}));
+    // main_routes.get('/auth/google/callback',
+    //     passport.authenticate('google', {
+    //             successReturnToOrRedirect: '/',
+    //             failureRedirect: '/#/login',
+    //             failureFlash: 'Invalid credentials'
+    //         }
+    //     ));
+    // main_routes.get('/login',
+    //     function (req, res) {
+    //         res.redirect('/#/login');
+    //     });
+    // main_routes.get('/logout',
+    //     function (req, res) {
+    //         req.session.destroy(function() {
+    //             req.logout();
+    //             res.redirect('/');
+    //         });
+    //     });
 
-module.exports = router;
+    app.use('/', main_routes);
+};

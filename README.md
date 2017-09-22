@@ -1,6 +1,9 @@
 # VoteToEat
 This is a sample site using NodeJS, Bootstrap, AngularJS and Socket.io
 
+#Code
+THIS CODE IS NO LONGER MAINTAINED HERE.  IT IS NOW HOSTED ON Bitbucket.
+
 ## Demo
 http://www.votetoeat.com
 
@@ -12,7 +15,3 @@ http://www.votetoeat.com
 * Full transparency of who voted for what
 * Yelp recommendations
 * Google recommendations
-
-## Interesting
-This is currently being hosted on openshift.
-
