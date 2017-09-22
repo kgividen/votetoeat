@@ -1,0 +1,191 @@
+<div id="map"></div>
+<div class="container row">
+    <h4>Invite someone:
+        <a href="sms:&body=Where do you want to eat?  Open this link and we'll vote.  https://www.votetoeat.com/#!/vote/{{vc.groupName}}">
+            <button type="button" class="btn btn-default" aria-label="Left Align">
+                <span class="glyphicon glyphicon-phone"></span> Text
+            </button>
+        </a>
+        <a href="mailto:?subject=Where do you want to eat?&body=Where do you want to eat?  Open this link and we'll vote. https://www.votetoeat.com/#!/vote/{{vc.groupName}}">
+            <button type="button" class="btn btn-default" aria-label="Left Align">
+                <span class="glyphicon glyphicon-envelope"></span> Email
+            </button>
+        </a>
+    </h4>
+</div>
+<div class="row">
+    <div class="col-md-12 outline">
+        <h3><small>Add places you'd like to eat:</small></h3>
+        <form class="form-inline">
+            <div class="input-group">
+                <input type="text" class="form-control" placeholder="Add Place Name..." ng-model="vc.placeName">
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" type="submit" ng-click="vc.addPlace()">Add</button>
+
+                </span>
+            </div>
+            <button class="btn btn-link" data-toggle="modal" data-target="#suggestionsModal"
+                    ng-click="vc.setSuggestionsGroup('yelp')">Yelp Suggestions
+            </button>
+            <button id="googleSuggestionsBtn" class="btn btn-link" data-toggle="modal"
+                    data-target="#suggestionsModal" ng-click="vc.setSuggestionsGroup('google')">Google Suggestions
+            </button>
+        </form>
+        <br>
+        <div class="col-md-12 container" ng-class="{true: 'well'}[vc.places.length > 0]">
+        <h4 ng-hide="vc.places.length <= 0"><small>Give each place a score.  The highest score wins!</small></h4>
+            <div ng-repeat="place in vc.places">
+                <div class="row">
+                    <div class="col-md-4">
+                        <a target="_blank" ng-href="https://google.com/maps?q={{place.name}}">
+                            <h4 class="display-inline" ng-bind="place.name"></h4>
+                        </a>
+                        <span ng-show="place.fromType == 'google'">
+                            <a target="_blank" ng-href="https://google.com/local?q={{place.name}},{{place.address}}">
+                            <img src="images/img_trans.gif" class="googleLogoSmall" alt="google">
+                            <rating ng-model="place.rating" readonly="true"></rating>
+                            </a>
+                        </span>
+                        <span ng-show="place.fromType == 'yelp'">
+                            <a target="_blank" ng-href="{{place.url}}">
+                                <img src="images/img_trans.gif" class="yelpLogoSmall" alt="yelp">
+                                <img ng-src="{{place.rating_img_url}}">
+                            </a>
+                            <a class="link hand" target="_blank" title="{{place.deal.what_you_get}}" ng-show="place.deal!=null" ng-href="{{place.deal.url}}">
+                                <span class="glyphicon glyphicon-check" aria-hidden="true"></span>
+                            </a>
+                        </span>
+                        <a title="{{place.address}}" target="_blank" ng-href="https://google.com/maps?q={{place.name}},{{place.address}}">
+                            <div class="indent-5">
+                                <small ng-bind="place.address"></small>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-8">
+                        <div class="btn-group">
+                            <button class="btn btn-default" ng-class="{'active':place.voteBtnActive == $index }"
+                                    ng-click="vc.voteForPlace(place,$index)"
+                                    ng-repeat="i in vc.getNumber(vc.vote_max) track by $index">
+                                {{$index}}
+                            </button>
+                        </div>
+                        <span>
+                            <span ng-bind="place.totalVotes"></span><span>&nbsp total</span>
+                            <span ng-show="place.winning" title="Winning!" class="winning glyphicon glyphicon-ok" aria-hidden="true"></span>
+                        </span>
+                    </div>
+                </div>
+                <br/>
+            </div>
+        </div>
+    </div>
+</div>
+<br>
+<div class="row">
+    <div class="col-md-12">
+        <ng-include src="'app/views/chat.html'"></ng-include>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12" growl inline="true"></div>
+</div>
+
+<div id="chooseNameModal" class="modal fade" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Name</h4>
+            </div>
+            <div class="modal-body">
+                <form name="userNameForm" class="form-group" data-toggle="validator">
+                    <label for="userName">What is Your Name</label>
+                    <input id="userName" type="text" class="form-control" placeholder="User Name" ng-model="vc.userName" required>
+                    <div class="help-block with-errors"></div>
+                    <button type="submit" class="btn btn-primary" ng-click="vc.chooseName()" ng-disabled="userNameForm.$invalid">Start Voting</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="suggestionsModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="suggestionsModal" aria-hidden="true">
+    <div growl reference="suggestionsMessages"></div>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" ng-bind="vc.suggestionTitle"></h4>
+            </div>
+            <div class="businessesList modal-body">
+                <form class="form-inline">
+                    <div ng-class="form-group">
+                        <!--Show input box and location icon for yelp.  Needs to be ng-show because ng-if destroys scope on the ng-models-->
+                        <div ng-show="vc.currentSuggestionGroup == 'yelp'" >
+                            <label for="yelp_city">Enter City</label>
+                            <input type="text" class="form-control" id="yelp_city" placeholder="Finding location..." ng-model="vc.location">
+                            <button class="btn btn-primary" title="Enter a City" ng-click="vc.getYelpData('city', yelpSortType);" ng-disabled="vc.location.length==0">Yelp By City</button>
+                            <button class="btn btn-primary" title="Get Current Location" ng-click="getYelpData('cll', vc.yelpSortType)">
+                                <span class="glyphicon glyphicon-map-marker hand"  aria-hidden="true" ></span>
+                            </button>
+                            <br/><br/>
+                            <label>Sort Again By:</label>
+                            <div class="btn-group" role="group">
+                                <button type="button" class="btn btn-default" ng-class="{active:yelpSortType === 0}" ng-click="vc.updateYelpSortData(0)">Best Match</button>
+                                <button type="button" class="btn btn-default" title="Yelp will only allow up to 40 businesses when searching by location.  Search by 'best' match for more than 40"
+                                        ng-class="{active:vc.yelpSortType === 1}" ng-click="vc.updateYelpSortData(1)">Location</button>
+                                <button type="button" class="btn btn-default" title="The rating sort is not strictly sorted by the rating value, but by an adjusted rating value that takes into account the number of ratings, similar to a bayesian average. This is so a business with 1 rating of 5 stars doesn’t immediately jump to the top."
+                                        ng-class="{active:vc.yelpSortType === 2}" ng-click="vc.updateYelpSortData(2)">Rating</button>
+                            </div>
+                            <button class="btn btn-default" ng-class="{active:vc.dealsOnly === true}" ng-click="vc.updateYelpSortDataWithDeals()">Deals Only</button>
+                        </div>
+                        <div ng-show="vc.currentSuggestionGroup == 'google'">
+                            <label>Sort Again By:</label>
+                            <div class="btn-group" role="group">
+                                <button type="button" class="btn btn-default" ng-class="{active:vc.googleSortType === 0}" ng-click="vc.updateGoogleSortData(0)">Best Match</button>
+                                <button type="button" class="btn btn-default" ng-class="{active:vc.googleSortType === 1}" ng-click="vc.updateGoogleSortData(1)">Location</button>
+                            </div>
+                        </div>
+                        <div ng-repeat="business in vc.businessData">
+                            <div ng-show="vc.currentSuggestionGroup == 'yelp'">
+                                <button class="btn btn-link" title="Add Place" ng-click="vc.addBusiness(business,'yelp')">{{business.name}}</button>
+                                <a target="_blank" ng-href="{{business.url}}">
+                                    <img title="Open in Yelp" ng-src="{{business.rating_img_url}}">
+                                </a>
+                                <a target="_blank" ng-href="{{business.url}}">
+                                    <img src="images/img_trans.gif" ng-class="vc.currentSuggestionGroup == 'yelp' ? 'yelpLogoSmall' : 'googleLogoSmall'" />
+                                </a>
+                                <a class="hand" target="_blank" title="{{business.deals[0].what_you_get}}" ng-show="business.deals.length > 0" ng-href="{{business.deals[0].url}}">
+                                    <span class="glyphicon glyphicon-check" aria-hidden="true" ></span>
+                                </a>
+                                <a target="_blank" ng-href="https://google.com/maps?q={{business.name}},{{business.location.display_address}}">
+                                    <small ng-repeat="address in business.location.display_address">{{address}} </small>
+                                </a>
+                            </div>
+                            <div ng-show="vc.currentSuggestionGroup == 'google'">
+                                <button class="btn btn-link" title="Add Place" ng-click="vc.addBusiness(business,'google')">{{business.name}}</button>
+                                <a target="_blank" ng-href="https://google.com/local?q={{business.name}},{{business.vicinity}}">
+                                    <img src="images/img_trans.gif" class="googleLogoSmall" title="Open in Google" alt="google">
+                                </a>
+                                <a target="_blank" ng-href="https://google.com/local?q={{business.name}},{{business.vicinity}}">
+                                    <rating ng-model="business.rating" readonly="true"></rating>
+                                </a>
+                                <a target="_blank" ng-href="https://google.com/maps?q={{business.name}},{{business.vicinity}}">
+                                    <small ng-bind="business.vicinity"></small>
+                                </a>
+                            </div>
+                        </div>
+                        <div>
+                            <span id="loadingLabel" ng-show="vc.showLoading === true">Loading . . .</span>
+                        </div>
+                        <button class="btn btn-primary pull-right" ng-show="vc.businessData.length > 0 && vc.currentSuggestionGroup == 'yelp'" ng-disabled="vc.yelpNextDisabled" ng-click="vc.getMoreYelpData()">Next 20</button>
+                        <button id="nextBtn" class="btn btn-primary pull-right" ng-show="vc.businessData.length > 0 && vc.currentSuggestionGroup == 'google'">Next Page</button>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-primary pull-right" data-dismiss="modal">Done</button>
+                <img src="images/img_trans.gif" class="pull-left" ng-class="vc.currentSuggestionGroup == 'yelp' ? 'yelpPoweredBy' : 'googlePoweredBy'" />
+            </div>
+        </div>
+    </div>
+</div>

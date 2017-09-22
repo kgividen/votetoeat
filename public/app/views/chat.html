@@ -1,0 +1,44 @@
+<link href="../css/chat.css" rel="stylesheet">
+<div ng-controller="ChatController as cc">
+    <div class="col-md-3">
+        <div class="row">
+            <div class="chat_head">
+                <span>Members of Group {{vc.groupName}}</span>
+            </div>
+            <div class="member_list">
+                <ul class="list-unstyled">
+                    <li ng-repeat="user in vc.groupMembers">
+                        <strong class="primary-font" ng-bind="user.name"></strong>
+                        <!--<strong class="pull-right">09:45AM</strong>-->
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!--chat_sidebar-->
+
+
+    <div class="col-md-9 message_section">
+        <div class="row">
+            <div class="chat_head">Chat</div>
+            <div class="chat_area" scroll-glue>
+                <ul class="list-unstyled">
+                    <li ng-repeat="message in vc.messages">
+                        <div class="chat-body1">
+                            <p ng-class="{'systemMsg':message.type =='system'}">
+                                <span class="timeStamp">({{message.timestamp | date:'shortTime'}}) {{message.username}}: </span> {{message.text}}
+                            </p>
+                        </div>
+                    </li>
+                </ul>
+            </div><!--chat_area-->
+            <div class="message_write">
+                <textarea id="chatMsgBox" ng-model="cc.msg" ng-keydown="$event.keyCode === 13 && cc.sendMsg($event)" class="form-control" placeholder="type a message"></textarea>
+                <div class="clearfix"></div>
+                <div class="chat_bottom">
+                    <button class="pull-right btn btn-success" ng-click="cc.sendMsg($event)">Send</button>
+                </div>
+            </div>
+        </div>
+    </div> <!--message_section-->
+</div>
