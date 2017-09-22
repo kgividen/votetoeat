@@ -1,9 +1,6 @@
 # VoteToEat
 This is a sample site using NodeJS, Bootstrap, AngularJS and Socket.io
 
-#Code
-THIS CODE IS NO LONGER MAINTAINED HERE.  IT IS NOW HOSTED ON Bitbucket.
-
 ## Demo
 http://www.votetoeat.com
 
